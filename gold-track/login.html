@@ -1,759 +1,243 @@
-<!-- ==========================================
-     Gold Track System
-     PAUL & CO LLP
-     Client Login
-========================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>
-        Client Login | PAUL & CO LLP
-    </title>
-
+    <title>PAUL & CO LLP — Admin Login</title>
 
     <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-
-        body{
-
-            min-height:100vh;
-
-            background:
-            linear-gradient(
-                rgba(0,0,0,0.75),
-                rgba(0,0,0,0.85)
-            ),
-            url("images/gold-bg.jpg");
-
-            background-size:cover;
-            background-position:center;
-
-            display:flex;
-            justify-content:center;
-            align-items:center;
-
-            color:white;
-
+        body {
+            font-family: Arial, sans-serif;
+            background: #050505;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-
-        .login-container{
-
-            width:400px;
-            padding:40px;
-
-            background:rgba(20,20,20,0.95);
-
-            border-radius:20px;
-
-            border:1px solid #FFD700;
-
-            box-shadow:
-            0 0 30px rgba(255,215,0,0.25);
-
-            text-align:center;
-
+        .login-container {
+            width: 100%;
+            max-width: 430px;
+            background: #111111;
+            border: 1px solid #3a3a3a;
+            border-radius: 18px;
+            padding: 35px 30px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.12);
         }
 
-
-        .logo img{
-
-            width:90px;
-            height:90px;
-
-            object-fit:contain;
-
-            margin-bottom:15px;
-
+        .logo {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 20px;
+            border: 2px solid #d4af37;
         }
 
-
-        .company-name{
-
-            color:#FFD700;
-
-            font-size:28px;
-
-            font-weight:bold;
-
-            margin-bottom:5px;
-
+        h1 {
+            text-align: center;
+            color: #d4af37;
+            font-size: 25px;
+            margin-bottom: 8px;
         }
 
-
-        .system-name{
-
-            color:#ddd;
-
-            font-size:18px;
-
-            margin-bottom:30px;
-
+        .subtitle {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 30px;
         }
 
-
-        .login-title{
-
-            font-size:25px;
-
-            margin-bottom:25px;
-
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+            font-size: 14px;
         }
 
-
-        .input-box{
-
-            text-align:left;
-
-            margin-bottom:20px;
-
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            border-radius: 9px;
+            background: #080808;
+            color: white;
+            font-size: 15px;
+            outline: none;
         }
 
-
-        .input-box label{
-
-            display:block;
-
-            margin-bottom:8px;
-
-            color:#FFD700;
-
-            font-size:15px;
-
+        input:focus {
+            border-color: #d4af37;
         }
 
-
-        .input-box input{
-
-            width:100%;
-
-            padding:14px;
-
-            border:none;
-
-            outline:none;
-
-            border-radius:8px;
-
-            background:#222;
-
-            color:white;
-
-            font-size:16px;
-
-            border:1px solid #444;
-
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: #d4af37;
+            color: #050505;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-
-        .input-box input:focus{
-
-            border-color:#FFD700;
-
+        button:hover {
+            background: #f0ca4d;
+            transform: translateY(-1px);
         }
 
-
-        .password-area{
-
-            position:relative;
-
+        .error {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #2a1010;
+            border: 1px solid #8b3030;
+            color: #ff7777;
+            text-align: center;
+            font-size: 14px;
         }
 
-
-        .password-area input{
-
-            padding-right:50px;
-
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-top: 25px;
         }
-
-
-        .password-area span{
-
-            position:absolute;
-
-            right:15px;
-
-            top:14px;
-
-            cursor:pointer;
-
-            color:#FFD700;
-
-        }
-
-
-        .login-button{
-
-            width:100%;
-
-            padding:15px;
-
-            margin-top:15px;
-
-            background:#FFD700;
-
-            color:black;
-
-            border:none;
-
-            border-radius:30px;
-
-            font-size:17px;
-
-            font-weight:bold;
-
-            cursor:pointer;
-
-            transition:.3s;
-
-        }
-
-
-        .login-button:hover{
-
-            background:white;
-
-        }
-
-
-        .message{
-
-            margin-top:20px;
-
-            color:#ff5555;
-
-            font-size:14px;
-
-        }
-
-
-        .back-button{
-
-            display:inline-block;
-
-            margin-top:20px;
-
-            color:#FFD700;
-
-            text-decoration:none;
-
-            font-size:15px;
-
-            transition:.3s;
-
-        }
-
-
-        .back-button:hover{
-
-            color:white;
-
-        }
-
-
-        .security-info{
-
-            margin-top:30px;
-
-            padding-top:25px;
-
-            border-top:1px solid #333;
-
-        }
-
-
-        .security-info h3{
-
-            color:#FFD700;
-
-            margin-bottom:10px;
-
-            font-size:18px;
-
-        }
-
-
-        .security-info p{
-
-            color:#bbb;
-
-            font-size:13px;
-
-            line-height:1.6;
-
-        }
-
-
-        .security-items{
-
-            display:flex;
-
-            justify-content:center;
-
-            gap:10px;
-
-            margin-top:20px;
-
-            flex-wrap:wrap;
-
-        }
-
-
-        .security-box{
-
-            background:#222;
-
-            border:1px solid #333;
-
-            border-radius:8px;
-
-            padding:10px;
-
-            font-size:12px;
-
-            color:#ddd;
-
-        }
-
-
-        .security-box span{
-
-            display:block;
-
-            margin-top:5px;
-
-        }
-
-
-        footer{
-
-            margin-top:25px;
-
-            color:#777;
-
-            font-size:12px;
-
-        }
-
-
-        footer span{
-
-            display:block;
-
-            margin-top:5px;
-
-            color:#FFD700;
-
-        }
-
-
-        @media(max-width:450px){
-
-            .login-container{
-
-                width:90%;
-
-                padding:30px 25px;
-
-            }
-
-        }
-
     </style>
-
 </head>
-
 
 <body>
 
+    <div class="login-container">
 
-<div class="login-container">
-
-
-    <!-- LOGO -->
-
-    <div class="logo">
-
+        <!-- Logo is in the shared images folder -->
         <img
-        src="images/logo.jpeg"
-        alt="PAUL & CO LLP Logo">
+            src="../images/logo.jpeg"
+            alt="PAUL & CO LLP Logo"
+            class="logo"
+        >
 
-    </div>
+        <h1>PAUL & CO LLP</h1>
 
+        <p class="subtitle">
+            Gold Track System — Administrator
+        </p>
 
-    <!-- COMPANY -->
+        <form id="adminLoginForm">
 
-    <div class="company-name">
-
-        PAUL & CO LLP
-
-    </div>
-
-
-    <!-- SYSTEM -->
-
-    <div class="system-name">
-
-        Gold Track System
-
-    </div>
-
-
-    <!-- LOGIN TITLE -->
-
-    <h2 class="login-title">
-
-        Client Portal Login
-
-    </h2>
-
-
-    <!-- LOGIN FORM -->
-
-    <form id="loginForm">
-
-
-        <!-- USERNAME -->
-
-        <div class="input-box">
-
-            <label>
-
-                Username
-
-            </label>
-
+            <label for="username">Company Name</label>
 
             <input
-            type="text"
-            id="username"
-            placeholder="Enter Username"
-            autocomplete="username"
-            required>
+                type="text"
+                id="username"
+                placeholder="Enter company name"
+                autocomplete="username"
+                required
+            >
 
-        </div>
+            <label for="password">Password</label>
 
-
-        <!-- PASSWORD -->
-
-        <div class="input-box">
-
-
-            <label>
-
-                Password
-
-            </label>
-
-
-            <div class="password-area">
-
-
-                <input
+            <input
                 type="password"
                 id="password"
-                placeholder="Enter Password"
+                placeholder="Enter admin password"
                 autocomplete="current-password"
-                required>
+                required
+            >
 
+            <button type="submit">
+                Access Admin Dashboard
+            </button>
 
-                <span
-                onclick="showPassword()"
-                title="Show/Hide Password">
-
-                    👁
-
-                </span>
-
-
+            <div class="error" id="errorMessage">
+                Invalid company name or password.
             </div>
 
+        </form>
 
+        <div class="footer">
+            PAUL & CO LLP © 2026
         </div>
-
-
-        <!-- LOGIN BUTTON -->
-
-        <button
-        type="submit"
-        class="login-button">
-
-            Login
-
-        </button>
-
-
-        <!-- BACK BUTTON -->
-
-        <a
-        href="index.html"
-        class="back-button">
-
-            ← Back
-
-        </a>
-
-
-    </form>
-
-
-    <!-- MESSAGE -->
-
-    <p
-    class="message"
-    id="message"></p>
-
-
-    <!-- SECURITY INFORMATION -->
-
-    <div class="security-info">
-
-
-        <h3>
-
-            Secure Gold Access
-
-        </h3>
-
-
-        <p>
-
-            This portal allows authorized clients of
-            PAUL & CO LLP to securely access their
-            gold tracking information.
-
-        </p>
-
-
-        <div class="security-items">
-
-
-            <div class="security-box">
-
-                🔒
-
-                <span>
-
-                    Protected Login
-
-                </span>
-
-            </div>
-
-
-            <div class="security-box">
-
-                📍
-
-                <span>
-
-                    Gold Tracking
-
-                </span>
-
-            </div>
-
-
-            <div class="security-box">
-
-                🛡️
-
-                <span>
-
-                    Asset Security
-
-                </span>
-
-            </div>
-
-
-        </div>
-
 
     </div>
 
+    <script>
 
-    <!-- FOOTER -->
+        const adminLoginForm =
+            document.getElementById("adminLoginForm");
 
-    <footer>
-
-        <p>
-
-            © 2026 PAUL & CO LLP
-
-        </p>
+        const errorMessage =
+            document.getElementById("errorMessage");
 
 
-        <span>
+        adminLoginForm.addEventListener(
+            "submit",
+            function(event) {
 
-            Gold Track System
+                event.preventDefault();
 
-        </span>
+                const username =
+                    document
+                        .getElementById("username")
+                        .value
+                        .trim()
+                        .toLowerCase();
 
-    </footer>
-
-
-</div>
-
-
-<!-- ==========================================
-     JAVASCRIPT
-     Login Authentication
-========================================== -->
-
-<script>
-
-
-// ==========================================
-// SHOW / HIDE PASSWORD
-// ==========================================
-
-function showPassword(){
-
-    let password =
-    document.getElementById("password");
+                const password =
+                    document
+                        .getElementById("password")
+                        .value;
 
 
-    if(password.type === "password"){
+                const correctUsername =
+                    "paul & co llp";
 
-        password.type = "text";
-
-    }
-
-    else{
-
-        password.type = "password";
-
-    }
-
-}
+                const correctPassword =
+                    "00gold1";
 
 
-// ==========================================
-// LOGIN SYSTEM
-// ==========================================
+                if (
+                    username === correctUsername &&
+                    password === correctPassword
+                ) {
 
-document
-.getElementById("loginForm")
-.addEventListener("submit", function(event){
+                    sessionStorage.setItem(
+                        "adminLoggedIn",
+                        "true"
+                    );
 
-    event.preventDefault();
+                    /*
+                     * Admin dashboard is in the
+                     * same admin folder.
+                     */
+                    window.location.href =
+                        "dashboard.html";
 
+                } else {
 
-    // Get username
+                    errorMessage.style.display =
+                        "block";
 
-    let username =
-    document
-    .getElementById("username")
-    .value
-    .trim();
+                }
 
-
-    // Get password
-
-    let password =
-    document
-    .getElementById("password")
-    .value
-    .trim();
-
-
-    // Message box
-
-    let message =
-    document
-    .getElementById("message");
-
-
-    // ======================================
-    // DEMO CLIENT ACCOUNT
-    // ======================================
-
-    if(
-
-        username.toLowerCase()
-        === "mary thomas"
-
-        &&
-
-        password
-        === "gold066"
-
-    ){
-
-
-        // Save login status
-
-        localStorage.setItem(
-            "goldTrackLogin",
-            "true"
+            }
         );
 
-
-        // Save username
-
-        localStorage.setItem(
-            "username",
-            username
-        );
-
-
-        // Success message
-
-        message.style.color =
-        "#00ff88";
-
-
-        message.innerHTML =
-        "Login successful. Opening dashboard...";
-
-
-        // Open dashboard
-
-        setTimeout(function(){
-
-            window.location.href =
-            "dashboard.html";
-
-        },1500);
-
-
-    }
-
-    else{
-
-
-        // Error message
-
-        message.style.color =
-        "red";
-
-
-        message.innerHTML =
-        "Invalid Username or Password";
-
-    }
-
-});
-
-</script>
-
+    </script>
 
 </body>
-
 </html>

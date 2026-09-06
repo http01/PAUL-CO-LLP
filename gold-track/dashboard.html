@@ -1,2915 +1,1399 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>PAUL & CO LLP | Gold Track System</title>
-
-
-    <!-- =====================================================
-         LEAFLET MAP
-    ====================================================== -->
-
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
-
+    <title>PAUL & CO LLP — Admin Dashboard</title>
 
     <style>
-
-        /* =====================================================
-           GLOBAL
-        ===================================================== */
-
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
         }
 
         body {
-            background: #080808;
-            color: white;
+            font-family: Arial, sans-serif;
+            background: #050505;
+            color: #fff;
             min-height: 100vh;
         }
 
-        button {
-            font-family: inherit;
-        }
-
-        .gold {
-            color: #FFD700;
-        }
-
-
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
         header {
-            background: #000;
-            min-height: 82px;
-            padding: 15px 6%;
+            background: #111;
+            border-bottom: 1px solid #333;
+            padding: 18px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #FFD700;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            gap: 20px;
         }
 
-        .logo-section {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
-        .logo-section img {
-            width: 58px;
-            height: 58px;
-            object-fit: contain;
+        .brand img {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4af37;
         }
 
-        .logo-section h2 {
-            color: #FFD700;
-            font-size: 23px;
+        .brand h1 {
+            color: #d4af37;
+            font-size: 20px;
         }
 
-        .logo-section p {
-            color: #aaa;
-            font-size: 13px;
+        .brand p {
+            color: #888;
+            font-size: 12px;
             margin-top: 3px;
         }
 
-        .logout-btn {
-            background: #FFD700;
-            color: #000;
-            padding: 11px 24px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            border: none;
+        .logout {
+            background: transparent;
+            color: #d4af37;
+            border: 1px solid #d4af37;
+            padding: 9px 15px;
+            border-radius: 7px;
             cursor: pointer;
-        }
-
-        .logout-btn:hover {
-            background: white;
-        }
-
-
-        /* =====================================================
-           WELCOME
-        ===================================================== */
-
-        .welcome {
-            padding: 40px 7% 25px;
-        }
-
-        .welcome h1 {
-            color: #FFD700;
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .welcome p {
-            color: #aaa;
-            font-size: 17px;
-        }
-
-
-        /* =====================================================
-           SUMMARY CARDS
-        ===================================================== */
-
-        .summary-container {
-            width: 86%;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 18px;
-        }
-
-        .summary-card {
-            background: linear-gradient(145deg, #171717, #101010);
-            padding: 24px;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 215, 0, .25);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
-        }
-
-        .summary-card h3 {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: .5px;
-        }
-
-        .summary-card h2 {
-            color: #FFD700;
-            font-size: 25px;
-        }
-
-        .status {
-            color: #00ff88 !important;
-        }
-
-
-        /* =====================================================
-           MAIN GRID
-        ===================================================== */
-
-        .dashboard-grid {
-            width: 86%;
-            margin: 30px auto 50px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 22px;
-        }
-
-        .card {
-            background: #131313;
-            border-radius: 20px;
-            padding: 27px;
-            border: 1px solid rgba(255, 215, 0, .2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
-        }
-
-        .card h2 {
-            color: #FFD700;
-            margin-bottom: 22px;
-            font-size: 21px;
-        }
-
-
-        /* =====================================================
-           INFO ROW
-        ===================================================== */
-
-        .info-row {
-            padding: 14px 0;
-            border-bottom: 1px solid #2c2c2c;
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-row span {
-            color: #FFD700;
-            font-size: 13px;
             font-weight: bold;
-            text-transform: uppercase;
         }
 
-        .info-row p {
+        .logout:hover {
+            background: #d4af37;
+            color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 30px 20px;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h2 {
+            font-size: 28px;
+        }
+
+        .page-title p {
+            color: #888;
             margin-top: 7px;
-            color: #ddd;
         }
 
-
-        /* =====================================================
-           TRACKING CARD
-        ===================================================== */
-
-        .tracking-card {
-            grid-column: 1 / -1;
+        .status-card,
+        .section,
+        .card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 14px;
         }
 
-        .tracking-header {
+        .status-card {
+            padding: 22px;
+            margin-bottom: 25px;
+        }
+
+        .status-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
             gap: 15px;
+        }
+
+        .status-title {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .status {
+            font-size: 25px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+
+        .status-badge {
+            padding: 9px 14px;
+            border-radius: 20px;
+            background: #241f0d;
+            color: #d4af37;
+            border: 1px solid #66551b;
+            font-size: 13px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .gold {
+            color: #d4af37;
+        }
+
+        .section {
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #d4af37;
             margin-bottom: 20px;
         }
 
-        .live-badge {
-            background: rgba(0, 255, 136, .12);
-            color: #00ff88;
-            border: 1px solid rgba(0, 255, 136, .4);
-            padding: 8px 13px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .live-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #00ff88;
-            border-radius: 50%;
-            margin-right: 5px;
-            box-shadow: 0 0 10px #00ff88;
-        }
-
-
-        /* =====================================================
-           MAP
-        ===================================================== */
-
-        #map {
-            width: 100%;
-            height: 540px;
-            border-radius: 18px;
-            border: 2px solid #FFD700;
-            overflow: hidden;
-        }
-
-        .leaflet-control-layers {
-            background: #111 !important;
-            color: white !important;
-        }
-
-        .leaflet-control-layers label {
-            color: white;
-        }
-
-        .leaflet-popup-content-wrapper,
-        .leaflet-popup-tip {
-            background: #111;
-            color: white;
-        }
-
-        .leaflet-popup-content {
-            line-height: 1.6;
-        }
-
-        .popup-title {
-            color: #FFD700;
-            font-size: 17px;
-            font-weight: bold;
-        }
-
-        .popup-green {
-            color: #00ff88;
-        }
-
-
-        /* =====================================================
-           MAP BUTTONS
-        ===================================================== */
-
-        .map-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .map-btn {
-            background: #222;
-            color: white;
-            border: 1px solid #444;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-
-        .map-btn:hover {
-            border-color: #FFD700;
-            color: #FFD700;
-        }
-
-        .map-btn.primary {
-            background: #FFD700;
-            color: #000;
-            border-color: #FFD700;
-            font-weight: bold;
-        }
-
-
-        /* =====================================================
-           LOCATION STATUS
-        ===================================================== */
-
-        .location-panel {
-            margin-top: 20px;
+        .controls {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
 
-        .location-box {
-            background: #1c1c1c;
-            border-radius: 14px;
-            padding: 18px;
+        .control {
+            padding: 15px;
+            border: none;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
         }
 
-        .location-box small {
-            color: #888;
-            display: block;
-            margin-bottom: 7px;
+        .start {
+            background: #1d6b35;
         }
 
-        .location-box strong {
-            color: #FFD700;
+        .pause {
+            background: #8a6710;
         }
 
-        .location-box .green {
-            color: #00ff88;
+        .restart {
+            background: #8a2525;
         }
 
-
-        /* =====================================================
-           PROGRESS
-        ===================================================== */
-
-        .progress-container {
-            margin-top: 20px;
+        .loss {
+            background: #5d2630;
         }
 
-        .progress-top {
-            display: flex;
-            justify-content: space-between;
-            color: #ccc;
-            margin-bottom: 9px;
+        .control:hover {
+            opacity: .85;
+        }
+
+        .message {
+            display: none;
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #241b0b;
+            border: 1px solid #6b5416;
+            color: #d4af37;
         }
 
         .progress-bar {
             width: 100%;
-            height: 12px;
+            height: 16px;
             background: #292929;
             border-radius: 20px;
             overflow: hidden;
         }
 
         .progress-fill {
-            width: 0%;
             height: 100%;
-            background: #FFD700;
-            border-radius: 20px;
-            transition: width .3s linear;
+            width: 0%;
+            background: #d4af37;
+            transition: width .5s ease;
         }
 
-
-        /* =====================================================
-           TRANSPORT STAGES
-        ===================================================== */
-
-        .transport-stages {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .stage {
-            background: #1c1c1c;
-            border-radius: 13px;
-            padding: 16px;
-            border: 1px solid #292929;
-        }
-
-        .stage.active {
-            border-color: #FFD700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, .1);
-        }
-
-        .stage.completed {
-            border-color: #00ff88;
-        }
-
-        .stage-icon {
-            font-size: 25px;
-            margin-bottom: 8px;
-        }
-
-        .stage h3 {
-            font-size: 14px;
-            color: #FFD700;
-            margin-bottom: 5px;
-        }
-
-        .stage p {
-            color: #aaa;
-            font-size: 12px;
-        }
-
-
-        /* =====================================================
-           TRACKING HISTORY
-        ===================================================== */
-
-        .history-item {
-            position: relative;
-            padding: 17px 17px 17px 48px;
-            margin-bottom: 12px;
-            background: #1b1b1b;
-            border-radius: 12px;
-        }
-
-        .history-icon {
-            position: absolute;
-            left: 15px;
-            top: 17px;
-        }
-
-        .history-item h3 {
-            color: #00ff88;
-            font-size: 15px;
-            margin-bottom: 6px;
-        }
-
-        .history-item p {
-            color: #aaa;
-            font-size: 13px;
-        }
-
-
-        /* =====================================================
-           SECURITY
-        ===================================================== */
-
-        .security-box {
-            background: #1b1b1b;
-            padding: 18px;
-            margin-bottom: 12px;
-            border-radius: 13px;
-            border-left: 3px solid #FFD700;
-        }
-
-        .security-box h3 {
-            color: #FFD700;
-            margin-bottom: 8px;
-            font-size: 15px;
-        }
-
-        .security-box p {
-            color: #aaa;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-
-
-        /* =====================================================
-           CONNECTION LOST
-        ===================================================== */
-
-        .connection-error {
-            display: none;
-            margin-top: 18px;
-            background: rgba(255, 50, 50, .08);
-            border: 1px solid rgba(255, 70, 70, .5);
-            border-radius: 14px;
-            padding: 20px;
-        }
-
-        .connection-error h3 {
-            color: #ff5555;
-            margin-bottom: 8px;
-        }
-
-        .connection-error p {
-            color: #bbb;
-            line-height: 1.6;
-        }
-
-        .error-location {
-            color: #FFD700;
-            font-weight: bold;
-        }
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        footer {
-            text-align: center;
-            padding: 35px;
-            background: #000;
-            border-top: 1px solid #333;
-        }
-
-        footer h2 {
-            color: #FFD700;
-            margin-bottom: 6px;
-        }
-
-        footer p {
-            color: #aaa;
-        }
-
-        footer small {
-            color: #666;
-            display: block;
+        .progress-text {
             margin-top: 10px;
+            color: #aaa;
         }
 
+        .route {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-        /* =====================================================
-           MOBILE
-        ===================================================== */
+        .location {
+            flex: 1;
+            background: #0b0b0b;
+            border: 1px solid #333;
+            padding: 18px;
+            border-radius: 10px;
+        }
 
-        @media(max-width:700px) {
+        .location small {
+            display: block;
+            color: #777;
+            margin-bottom: 7px;
+        }
 
-            header {
-                padding: 13px 5%;
+        .location strong {
+            color: #fff;
+        }
+
+        .arrow {
+            color: #d4af37;
+            font-size: 25px;
+        }
+
+        .loss-info {
+            margin-top: 15px;
+            padding: 14px;
+            background: #0b0b0b;
+            border: 1px solid #333;
+            border-radius: 9px;
+            color: #aaa;
+        }
+
+        .loss-info strong {
+            color: #ff7777;
+        }
+
+        @media (max-width: 850px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .logo-section img {
-                width: 48px;
-                height: 48px;
-            }
-
-            .logo-section h2 {
-                font-size: 17px;
-            }
-
-            .logout-btn {
-                padding: 9px 15px;
-                font-size: 12px;
-            }
-
-            .welcome {
-                padding: 30px 5% 20px;
-            }
-
-            .welcome h1 {
-                font-size: 29px;
-            }
-
-            .summary-container,
-            .dashboard-grid {
-                width: 90%;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tracking-card {
-                grid-column: auto;
-            }
-
-            #map {
-                height: 380px;
-            }
-
-            .tracking-header {
-                align-items: flex-start;
+            .route {
                 flex-direction: column;
             }
 
+            .arrow {
+                transform: rotate(90deg);
+            }
         }
 
+        @media (max-width: 550px) {
+            .cards,
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+        }
     </style>
-
 </head>
-
 
 <body>
 
+<header>
 
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
+    <div class="brand">
 
-    <header>
+        <img
+            src="../images/logo.jpeg"
+            alt="PAUL & CO LLP"
+        >
 
-        <div class="logo-section">
+        <div>
+            <h1>PAUL & CO LLP</h1>
+            <p>Gold Track System — Administrator</p>
+        </div>
 
-            <img
-                src="images/logo.jpeg"
-                alt="PAUL & CO LLP Logo"
-            >
+    </div>
+
+    <button
+        class="logout"
+        onclick="logoutAdmin()"
+    >
+        Logout
+    </button>
+
+</header>
+
+
+<div class="container">
+
+    <div class="page-title">
+
+        <h2>Admin Dashboard</h2>
+
+        <p>
+            Manage and monitor the gold transportation tracking system.
+        </p>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="status-card">
+
+        <div class="status-top">
 
             <div>
 
-                <h2>PAUL & CO LLP</h2>
-
-                <p>Gold Track System</p>
-
-            </div>
-
-        </div>
-
-
-        <a
-            href="#"
-            class="logout-btn"
-            onclick="logout(); return false;"
-        >
-            Logout
-        </a>
-
-    </header>
-
-
-    <!-- =====================================================
-         WELCOME
-    ====================================================== -->
-
-    <section class="welcome">
-
-        <h1>Gold Tracking Dashboard</h1>
-
-        <p>
-            Welcome,
-            <strong class="gold">Mary Thomas</strong>.
-            Monitor your gold asset transportation journey.
-        </p>
-
-    </section>
-
-
-    <!-- =====================================================
-         SUMMARY
-    ====================================================== -->
-
-    <section class="summary-container">
-
-        <div class="summary-card">
-
-            <h3>Tracking Status</h3>
-
-            <h2
-                class="status"
-                id="statusText"
-            >
-                ⏳ Tracking Scheduled
-            </h2>
-
-        </div>
-
-
-        <div class="summary-card">
-
-            <h3>Gold Weight</h3>
-
-            <h2>100 KG</h2>
-
-        </div>
-
-
-        <div class="summary-card">
-
-            <h3>Gold ID</h3>
-
-            <h2>GT-066</h2>
-
-        </div>
-
-
-        <div class="summary-card">
-
-            <h3>Journey</h3>
-
-            <h2>Ghana → USA</h2>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         MAIN DASHBOARD
-    ====================================================== -->
-
-    <section class="dashboard-grid">
-
-
-        <!-- =================================================
-             CLIENT INFORMATION
-        ================================================== -->
-
-        <div class="card">
-
-            <h2>Client Information</h2>
-
-            <div class="info-row">
-
-                <span>Holder Name</span>
-
-                <p>Mary Thomas</p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Origin Country</span>
-
-                <p>Ghana 🇬🇭</p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Destination Country</span>
-
-                <p>United States 🇺🇸</p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Company</span>
-
-                <p>PAUL & CO LLP</p>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             GOLD ASSET
-        ================================================== -->
-
-        <div class="card">
-
-            <h2>Gold Asset Details</h2>
-
-            <div class="info-row">
-
-                <span>Asset Type</span>
-
-                <p>Gold Transportation Asset</p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Gold Weight</span>
-
-                <p>100 KG</p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Gold ID</span>
-
-                <p>GT-066</p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Ownership Status</span>
-
-                <p style="color:#00ff88;">
-                    Verified Holder
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             TRACKING MAP
-        ================================================== -->
-
-        <div class="card tracking-card">
-
-            <div class="tracking-header">
-
-                <div>
-
-                    <h2 style="margin-bottom:5px;">
-                        Gold Transportation Tracking
-                    </h2>
-
-                    <p style="color:#999;">
-                        Ghana → United States
-                    </p>
-
+                <div class="status-title">
+                    CURRENT TRACKING STATUS
                 </div>
-
 
                 <div
-                    class="live-badge"
-                    id="liveBadge"
+                    class="status"
+                    id="trackingStatus"
                 >
-
-                    <span class="live-dot"></span>
-
-                    WAITING TO START
-
+                    Scheduled
                 </div>
 
             </div>
-
-
-            <div id="map"></div>
-
-
-            <div class="map-buttons">
-
-                <button
-                    class="map-btn primary"
-                    onclick="fitRoute()"
-                >
-                    🗺️ Show Full Route
-                </button>
-
-
-                <button
-                    class="map-btn"
-                    onclick="centerMarker()"
-                >
-                    📍 Current Location
-                </button>
-
-            </div>
-
-
-            <!-- LOCATION INFORMATION -->
-
-            <div class="location-panel">
-
-                <div class="location-box">
-
-                    <small>Current Location</small>
-
-                    <strong id="currentLocation">
-                        Airport City, Accra, Ghana
-                    </strong>
-
-                </div>
-
-
-                <div class="location-box">
-
-                    <small>Journey Day</small>
-
-                    <strong id="journeyDay">
-                        Day 1 of 7
-                    </strong>
-
-                </div>
-
-
-                <div class="location-box">
-
-                    <small>Transportation</small>
-
-                    <strong id="transportMode">
-                        🚛 Secure Ground
-                    </strong>
-
-                </div>
-
-
-                <div class="location-box">
-
-                    <small>Progress</small>
-
-                    <strong
-                        class="green"
-                        id="progressText"
-                    >
-                        0%
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- PROGRESS -->
-
-            <div class="progress-container">
-
-                <div class="progress-top">
-
-                    <span>
-                        Transportation Progress
-                    </span>
-
-                    <span id="progressPercent">
-                        0%
-                    </span>
-
-                </div>
-
-
-                <div class="progress-bar">
-
-                    <div
-                        class="progress-fill"
-                        id="progressBar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <!-- TRANSPORT STAGES -->
-
-            <div class="transport-stages">
-
-                <div
-                    class="stage active"
-                    id="stage1"
-                >
-
-                    <div class="stage-icon">
-                        🚛
-                    </div>
-
-                    <h3>Ghana Ground</h3>
-
-                    <p>
-                        Secure transportation
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="stage"
-                    id="stage2"
-                >
-
-                    <div class="stage-icon">
-                        ✈️
-                    </div>
-
-                    <h3>Air Cargo</h3>
-
-                    <p>
-                        International transit
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="stage"
-                    id="stage3"
-                >
-
-                    <div class="stage-icon">
-                        🇺🇸
-                    </div>
-
-                    <h3>USA Processing</h3>
-
-                    <p>
-                        Arrival processing
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="stage"
-                    id="stage4"
-                >
-
-                    <div class="stage-icon">
-                        🚛
-                    </div>
-
-                    <h3>USA Ground</h3>
-
-                    <p>
-                        Final transportation
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- CONNECTION ERROR -->
 
             <div
-                class="connection-error"
-                id="connectionError"
+                class="status-badge"
+                id="statusBadge"
             >
-
-                <h3>
-                    ⚠️ TRACKING CONNECTION LOST
-                </h3>
-
-                <p>
-                    Unable to retrieve the latest tracking
-                    information from the tracking system.
-                </p>
-
-                <p style="margin-top:8px;">
-
-                    Last known location:
-
-                    <span
-                        class="error-location"
-                        id="lastKnownLocation"
-                    >
-                        —
-                    </span>
-
-                </p>
-
-                <p style="margin-top:8px;">
-
-                    The tracking marker is no longer receiving
-                    location updates.
-
-                </p>
-
+                ⏳ WAITING TO START
             </div>
 
         </div>
 
+    </div>
 
-        <!-- =================================================
-             TRANSPORTATION INFORMATION
-        ================================================== -->
+
+    <!-- GOLD INFORMATION -->
+
+    <div class="cards">
 
         <div class="card">
 
-            <h2>Transportation Information</h2>
-
-            <div class="info-row">
-
-                <span>Origin</span>
-
-                <p>
-                    Airport City, Accra, Ghana 🇬🇭
-                </p>
-
+            <div class="card-title">
+                GOLD HOLDER
             </div>
 
-
-            <div class="info-row">
-
-                <span>Air Departure</span>
-
-                <p>
-                    Kotoka International Airport
-                </p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Destination</span>
-
-                <p>
-                    1 Market Street, San Francisco,
-                    CA 94105, USA 🇺🇸
-                </p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Transportation Method</span>
-
-                <p>
-                    Secure Ground + Air Cargo + Ground
-                </p>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>Estimated Journey</span>
-
-                <p>
-                    7 days
-                </p>
-
+            <div class="card-value">
+                MARY THOMAS
             </div>
 
         </div>
 
-
-        <!-- =================================================
-             TRACKING HISTORY
-        ================================================== -->
 
         <div class="card">
 
-            <h2>Tracking History</h2>
-
-
-            <div class="history-item">
-
-                <span class="history-icon">
-                    ✓
-                </span>
-
-                <h3>
-                    Asset Prepared
-                </h3>
-
-                <p>
-                    Day 1 — Accra, Ghana
-                </p>
-
+            <div class="card-title">
+                GOLD ID
             </div>
 
-
-            <div class="history-item">
-
-                <span class="history-icon">
-                    ✓
-                </span>
-
-                <h3>
-                    International Departure
-                </h3>
-
-                <p>
-                    Day 2 — Kotoka International Airport
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <span class="history-icon">
-                    ✓
-                </span>
-
-                <h3>
-                    International Transit
-                </h3>
-
-                <p>
-                    Days 3–4 — Atlantic Ocean
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <span class="history-icon">
-                    ✓
-                </span>
-
-                <h3>
-                    USA Processing
-                </h3>
-
-                <p>
-                    Day 5 — United States
-                </p>
-
-            </div>
-
-
-            <div class="history-item">
-
-                <span class="history-icon">
-                    ●
-                </span>
-
-                <h3 id="historyCurrent">
-                    Tracking Scheduled
-                </h3>
-
-                <p id="historyCurrentText">
-                    Waiting for the journey to be started by the tracking administrator.
-                </p>
-
+            <div class="card-value gold">
+                GT-066
             </div>
 
         </div>
 
-
-        <!-- =================================================
-             SECURITY
-        ================================================== -->
 
         <div class="card">
 
-            <h2>Security Overview</h2>
-
-
-            <div class="security-box">
-
-                <h3>
-                    🔒 Authorized Access
-                </h3>
-
-                <p>
-                    Gold information is available through
-                    the authorized client portal.
-                </p>
-
+            <div class="card-title">
+                GOLD WEIGHT
             </div>
 
-
-            <div class="security-box">
-
-                <h3>
-                    📍 Location Monitoring
-                </h3>
-
-                <p>
-                    Transportation position is monitored
-                    throughout the journey.
-                </p>
-
-            </div>
-
-
-            <div class="security-box">
-
-                <h3>
-                    🛡️ Asset Identification
-                </h3>
-
-                <p>
-                    Asset ID GT-066 is associated with the
-                    100 KG gold tracking record.
-                </p>
-
-            </div>
-
-
-            <div class="security-box">
-
-                <h3>
-                    🌐 Map Monitoring
-                </h3>
-
-                <p>
-                    Interactive map layers allow street,
-                    satellite and terrain viewing.
-                </p>
-
+            <div class="card-value gold">
+                100 KG
             </div>
 
         </div>
 
 
-    </section>
+        <div class="card">
 
+            <div class="card-title">
+                DESTINATION
+            </div>
 
-    <!-- =====================================================
-         FOOTER
-    ====================================================== -->
+            <div class="card-value">
+                California, USA
+            </div>
 
-    <footer>
+        </div>
 
-        <h2>PAUL & CO LLP</h2>
+    </div>
 
-        <p>Gold Track System</p>
 
-        <small>
-            © 2026 PAUL & CO LLP. All Rights Reserved.
-        </small>
+    <!-- CONTROLS -->
 
-    </footer>
+    <div class="section">
 
+        <h3>Tracking Controls</h3>
 
-    <!-- =====================================================
-         LEAFLET JAVASCRIPT
-    ====================================================== -->
+        <div class="controls">
 
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    </script>
+            <button
+                class="control start"
+                onclick="startJourney()"
+            >
+                ▶ Start Journey
+            </button>
 
+            <button
+                class="control pause"
+                onclick="pauseJourney()"
+            >
+                ⏸ Pause Tracking
+            </button>
 
-    <script>
+            <button
+                class="control restart"
+                onclick="restartJourney()"
+            >
+                🔄 Restart Journey
+            </button>
 
-        /* =====================================================
-           CLIENT AUTHENTICATION
-        ===================================================== */
+            <button
+                class="control loss"
+                onclick="setConnectionLoss()"
+            >
+                ⚠️ Set Connection Loss
+            </button>
 
-        window.addEventListener("load", function () {
+        </div>
 
-            const loginStatus =
-                localStorage.getItem("goldTrackLogin");
+        <div
+            class="message"
+            id="message"
+        ></div>
 
-            if (loginStatus !== "true") {
+    </div>
 
-                window.location.href = "login.html";
 
-                return;
+    <!-- PROGRESS -->
 
-            }
+    <div class="section">
 
-            initializeMap();
+        <h3>Journey Progress</h3>
 
-            startTracking();
+        <div class="progress-bar">
 
-        });
+            <div
+                class="progress-fill"
+                id="progressFill"
+            ></div>
 
+        </div>
 
-        /* =====================================================
-           LOGOUT
-        ===================================================== */
+        <div
+            class="progress-text"
+            id="progressText"
+        >
+            0% completed
+        </div>
 
-        function logout() {
+        <div
+            class="loss-info"
+            id="lossInfo"
+        >
+            Connection-loss point:
+            <strong>Not set</strong>
+        </div>
 
-            localStorage.removeItem("goldTrackLogin");
+    </div>
 
-            localStorage.removeItem("username");
 
-            window.location.href = "login.html";
+    <!-- ROUTE -->
 
-        }
+    <div class="section">
 
+        <h3>Transportation Route</h3>
 
-        /* =====================================================
-           ADMIN-CONTROLLED STORAGE KEYS
-        ===================================================== */
+        <div class="route">
 
-        const STATUS_KEY =
-            "goldTrackingStatus";
+            <div class="location">
 
-        const START_KEY =
-            "goldJourneyStart";
+                <small>ORIGIN</small>
 
-        const PAUSED_AT_KEY =
-            "goldJourneyPausedAt";
-
-        const PAUSED_TOTAL_KEY =
-            "goldJourneyPausedTotal";
-
-        const LOSS_KEY =
-            "goldConnectionLossProgress";
-
-
-        /* =====================================================
-           JOURNEY DURATION
-        ===================================================== */
-
-        const JOURNEY_DURATION =
-            7 * 24 * 60 * 60 * 1000;
-
-
-        /* =====================================================
-           MAP VARIABLES
-        ===================================================== */
-
-        let map = null;
-
-        let marker = null;
-
-        let routeLine = null;
-
-        let animationFrame = null;
-
-        let connectionLossProgress = null;
-
-        let trackingLost = false;
-
-        let lastKnownLocation =
-            "Airport City, Accra, Ghana";
-
-
-        /* =====================================================
-           ROUTE
-        ===================================================== */
-
-        const route = [
-
-            {
-                lat: 5.6037,
-                lng: -0.1870,
-                location: "Airport City, Accra, Ghana",
-                mode: "🚛 Secure Ground",
-                day: 1
-            },
-
-            {
-                lat: 5.6100,
-                lng: -0.1660,
-                location: "Kotoka International Airport",
-                mode: "✈️ Air Cargo",
-                day: 2
-            },
-
-            {
-                lat: 8.0000,
-                lng: -7.0000,
-                location: "West African Air Transit",
-                mode: "✈️ International Air Transit",
-                day: 2
-            },
-
-            {
-                lat: 15.0000,
-                lng: -25.0000,
-                location: "Atlantic Ocean",
-                mode: "✈️ International Air Transit",
-                day: 3
-            },
-
-            {
-                lat: 25.0000,
-                lng: -42.0000,
-                location: "Atlantic Ocean",
-                mode: "✈️ International Air Transit",
-                day: 3
-            },
-
-            {
-                lat: 34.0000,
-                lng: -70.0000,
-                location: "North Atlantic Transit",
-                mode: "✈️ International Air Transit",
-                day: 4
-            },
-
-            {
-                lat: 39.0000,
-                lng: -95.0000,
-                location: "United States",
-                mode: "🇺🇸 USA Processing",
-                day: 5
-            },
-
-            {
-                lat: 39.0997,
-                lng: -94.5786,
-                location: "Kansas City Region",
-                mode: "🚛 USA Ground",
-                day: 5
-            },
-
-            {
-                lat: 39.7392,
-                lng: -104.9903,
-                location: "Denver, Colorado",
-                mode: "🚛 USA Ground",
-                day: 6
-            },
-
-            {
-                lat: 40.7608,
-                lng: -111.8910,
-                location: "Utah Region",
-                mode: "🚛 USA Ground",
-                day: 6
-            },
-
-            {
-                lat: 38.8026,
-                lng: -116.4194,
-                location: "Western USA",
-                mode: "🚛 USA Ground",
-                day: 7
-            },
-
-            {
-                lat: 36.7783,
-                lng: -119.4179,
-                location: "California, USA",
-                mode: "🚛 Final Ground Transportation",
-                day: 7
-            }
-
-        ];
-
-
-        /* =====================================================
-           DISTANCE CALCULATION
-        ====================================================== */
-
-        function distanceBetween(a, b) {
-
-            const R = 6371;
-
-            const lat1 =
-                a.lat * Math.PI / 180;
-
-            const lat2 =
-                b.lat * Math.PI / 180;
-
-            const dLat =
-                (b.lat - a.lat) *
-                Math.PI / 180;
-
-            const dLng =
-                (b.lng - a.lng) *
-                Math.PI / 180;
-
-            const x =
-                Math.sin(dLat / 2) *
-                Math.sin(dLat / 2) +
-
-                Math.cos(lat1) *
-                Math.cos(lat2) *
-                Math.sin(dLng / 2) *
-                Math.sin(dLng / 2);
-
-            const y =
-                2 *
-                Math.atan2(
-                    Math.sqrt(x),
-                    Math.sqrt(1 - x)
-                );
-
-            return R * y;
-
-        }
-
-
-        /* =====================================================
-           DISTANCE TABLE
-        ====================================================== */
-
-        let segmentDistances = [];
-
-        let totalDistance = 0;
-
-
-        function buildDistanceTable() {
-
-            segmentDistances = [];
-
-            totalDistance = 0;
-
-            for (
-                let i = 0;
-                i < route.length - 1;
-                i++
-            ) {
-
-                const distance =
-                    distanceBetween(
-                        route[i],
-                        route[i + 1]
-                    );
-
-                segmentDistances.push(
-                    distance
-                );
-
-                totalDistance +=
-                    distance;
-
-            }
-
-        }
-
-
-        /* =====================================================
-           GET POINT ON ROUTE
-        ====================================================== */
-
-        function getPointAtProgress(progress) {
-
-            if (progress <= 0) {
-
-                return {
-                    ...route[0]
-                };
-
-            }
-
-            if (progress >= 1) {
-
-                return {
-                    ...route[route.length - 1]
-                };
-
-            }
-
-
-            const targetDistance =
-                totalDistance * progress;
-
-            let accumulated = 0;
-
-
-            for (
-                let i = 0;
-                i < segmentDistances.length;
-                i++
-            ) {
-
-                const segmentDistance =
-                    segmentDistances[i];
-
-
-                if (
-                    accumulated +
-                    segmentDistance >=
-                    targetDistance
-                ) {
-
-                    const remaining =
-                        targetDistance -
-                        accumulated;
-
-
-                    const segmentProgress =
-                        remaining /
-                        segmentDistance;
-
-
-                    const start =
-                        route[i];
-
-                    const end =
-                        route[i + 1];
-
-
-                    return {
-
-                        lat:
-                            start.lat +
-                            (end.lat - start.lat) *
-                            segmentProgress,
-
-                        lng:
-                            start.lng +
-                            (end.lng - start.lng) *
-                            segmentProgress,
-
-                        location:
-                            segmentProgress > 0.5
-                                ? end.location
-                                : start.location,
-
-                        mode:
-                            segmentProgress > 0.5
-                                ? end.mode
-                                : start.mode,
-
-                        day:
-                            segmentProgress > 0.5
-                                ? end.day
-                                : start.day
-
-                    };
-
-                }
-
-
-                accumulated +=
-                    segmentDistance;
-
-            }
-
-
-            return {
-                ...route[route.length - 1]
-            };
-
-        }
-
-
-        /* =====================================================
-           LOAD ADMIN CONNECTION-LOSS POINT
-        ====================================================== */
-
-        function loadConnectionLossPoint() {
-
-            const saved =
-                localStorage.getItem(
-                    LOSS_KEY
-                );
-
-
-            if (saved !== null) {
-
-                const parsed =
-                    parseFloat(saved);
-
-
-                if (!isNaN(parsed)) {
-
-                    connectionLossProgress =
-                        parsed;
-
-                    return;
-
-                }
-
-            }
-
-
-            /*
-               IMPORTANT:
-
-               The client does NOT create a random
-               connection-loss point.
-
-               The Admin creates the fixed point.
-
-               This ensures the Admin remains the
-               controller of the journey.
-            */
-
-            connectionLossProgress = null;
-
-        }
-
-
-        /* =====================================================
-           MAP INITIALIZATION
-        ====================================================== */
-
-        function initializeMap() {
-
-            map =
-                L.map("map", {
-                    zoomControl: true
-                }).setView(
-                    [20, -45],
-                    3
-                );
-
-
-            /* STREET MAP */
-
-            const streetLayer =
-                L.tileLayer(
-                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    {
-                        attribution:
-                            "&copy; OpenStreetMap contributors",
-
-                        maxZoom: 19
-                    }
-                );
-
-
-            /* SATELLITE */
-
-            const satelliteLayer =
-                L.tileLayer(
-                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                    {
-                        attribution:
-                            "Tiles &copy; Esri",
-
-                        maxZoom: 19
-                    }
-                );
-
-
-            /* TERRAIN */
-
-            const terrainLayer =
-                L.tileLayer(
-                    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-                    {
-                        attribution:
-                            "Map data &copy; OpenStreetMap contributors, SRTM | Map style &copy; OpenTopoMap",
-
-                        maxZoom: 17
-                    }
-                );
-
-
-            streetLayer.addTo(map);
-
-
-            const baseMaps = {
-
-                "🗺️ Street Map":
-                    streetLayer,
-
-                "🛰️ Satellite":
-                    satelliteLayer,
-
-                "⛰️ Terrain":
-                    terrainLayer
-
-            };
-
-
-            L.control.layers(
-                baseMaps,
-                null,
-                {
-                    collapsed: false
-                }
-            ).addTo(map);
-
-
-            /* ROUTE */
-
-            const routeCoordinates =
-                route.map(point => [
-                    point.lat,
-                    point.lng
-                ]);
-
-
-            routeLine =
-                L.polyline(
-                    routeCoordinates,
-                    {
-                        color: "#FFD700",
-                        weight: 4,
-                        opacity: .8,
-                        dashArray: "8 8"
-                    }
-                ).addTo(map);
-
-
-            /* ORIGIN MARKER */
-
-            L.marker(
-                [5.6037, -0.1870]
-            )
-            .addTo(map)
-            .bindPopup(`
-                <div class="popup-title">
-                    🇬🇭 Origin
-                </div>
-
-                <p>
+                <strong>
                     Airport City, Accra, Ghana
-                </p>
+                </strong>
 
-                <p>
-                    Secure transportation origin
-                </p>
-            `);
+            </div>
 
+            <div class="arrow">
+                →
+            </div>
 
-            /* DESTINATION MARKER */
+            <div class="location">
 
-            L.marker(
-                [36.7783, -119.4179]
-            )
-            .addTo(map)
-            .bindPopup(`
-                <div class="popup-title">
-                    🇺🇸 Intended Destination
-                </div>
+                <small>DESTINATION</small>
 
-                <p>
+                <strong>
                     California, USA
-                </p>
+                </strong>
 
-                <p>
-                    1 Market Street, San Francisco,
-                    CA 94105
-                </p>
-            `);
+            </div>
 
+        </div>
 
-            /* TRACKING MARKER */
+    </div>
 
-            marker =
-                L.marker([
-                    route[0].lat,
-                    route[0].lng
-                ])
-                .addTo(map);
 
+    <!-- CURRENT LOCATION -->
 
-            updateMarkerPopup(
-                route[0]
-            );
+    <div class="section">
 
+        <h3>Current Tracking Information</h3>
 
-            map.fitBounds(
-                routeLine.getBounds(),
-                {
-                    padding: [40, 40]
-                }
-            );
+        <div class="location">
 
-        }
+            <small>
+                LAST KNOWN LOCATION
+            </small>
 
+            <strong id="currentLocation">
+                Awaiting journey start...
+            </strong>
 
-        /* =====================================================
-           MARKER POPUP
-        ====================================================== */
+        </div>
 
-        function updateMarkerPopup(point) {
+    </div>
 
-            if (!marker) {
-                return;
-            }
+</div>
 
 
-            marker.bindPopup(`
+<script>
 
-                <div class="popup-title">
-                    PAUL & CO LLP
-                </div>
+/* =========================================================
+   ADMIN SECURITY
+========================================================= */
 
-                <p>
-                    <strong>Gold ID:</strong>
-                    GT-066
-                </p>
+if (
+    sessionStorage.getItem("adminLoggedIn") !== "true"
+) {
 
-                <p>
-                    <strong>Weight:</strong>
-                    100 KG
-                </p>
+    window.location.href = "login.html";
 
-                <p>
-                    <strong>Location:</strong>
-                    ${point.location}
-                </p>
+}
 
-                <p class="popup-green">
-                    🟢 Tracking Active
-                </p>
 
-            `);
+/* =========================================================
+   STORAGE KEYS
+========================================================= */
 
-        }
+const STATUS_KEY =
+    "goldTrackingStatus";
 
+const START_KEY =
+    "goldJourneyStart";
 
-        /* =====================================================
-           START TRACKING
-        ====================================================== */
+const PAUSED_AT_KEY =
+    "goldJourneyPausedAt";
 
-        function startTracking() {
+const PAUSED_TOTAL_KEY =
+    "goldJourneyPausedTotal";
 
-            clearAnimationFrame();
+const LOSS_KEY =
+    "goldConnectionLossProgress";
 
-            buildDistanceTable();
 
-            loadConnectionLossPoint();
+/* =========================================================
+   JOURNEY DURATION
+========================================================= */
 
-            trackingLost = false;
+const JOURNEY_DURATION =
+    7 * 24 * 60 * 60 * 1000;
 
 
-            document.getElementById(
-                "connectionError"
-            ).style.display = "none";
+/* =========================================================
+   ROUTE
+========================================================= */
 
+const route = [
 
-            requestAnimationFrame(
-                updateTracking
-            );
+    {
+        lat: 5.6037,
+        lng: -0.1870,
+        location: "Airport City, Accra, Ghana"
+    },
 
-        }
+    {
+        lat: 5.6100,
+        lng: -0.1660,
+        location: "Kotoka International Airport"
+    },
 
+    {
+        lat: 8.0000,
+        lng: -7.0000,
+        location: "West African Air Transit"
+    },
 
-        /* =====================================================
-           GET ADMIN-CONTROLLED PROGRESS
-        ====================================================== */
+    {
+        lat: 15.0000,
+        lng: -25.0000,
+        location: "Atlantic Ocean"
+    },
 
-        function getControlledProgress() {
+    {
+        lat: 25.0000,
+        lng: -42.0000,
+        location: "Atlantic Ocean"
+    },
 
-            const status =
-                localStorage.getItem(
-                    STATUS_KEY
-                ) || "scheduled";
+    {
+        lat: 34.0000,
+        lng: -70.0000,
+        location: "North Atlantic Transit"
+    },
 
+    {
+        lat: 39.0000,
+        lng: -95.0000,
+        location: "United States"
+    },
 
-            const start =
-                parseInt(
-                    localStorage.getItem(
-                        START_KEY
-                    )
-                );
+    {
+        lat: 39.0997,
+        lng: -94.5786,
+        location: "Kansas City Region"
+    },
 
+    {
+        lat: 39.7392,
+        lng: -104.9903,
+        location: "Denver, Colorado"
+    },
 
-            if (
-                !start ||
-                status === "scheduled"
-            ) {
+    {
+        lat: 40.7608,
+        lng: -111.8910,
+        location: "Utah Region"
+    },
 
-                return 0;
+    {
+        lat: 38.8026,
+        lng: -116.4194,
+        location: "Western USA"
+    },
 
-            }
+    {
+        lat: 36.7783,
+        lng: -119.4179,
+        location: "California, USA"
+    }
 
+];
 
-            let pausedTotal =
-                parseInt(
-                    localStorage.getItem(
-                        PAUSED_TOTAL_KEY
-                    )
-                ) || 0;
 
+/* =========================================================
+   UI
+========================================================= */
 
-            let currentTime =
-                Date.now();
+const trackingStatus =
+    document.getElementById("trackingStatus");
 
+const statusBadge =
+    document.getElementById("statusBadge");
 
-            /*
-               When paused, stop the clock
-               at the exact pause time.
-            */
+const progressFill =
+    document.getElementById("progressFill");
 
-            if (
-                status === "paused"
-            ) {
+const progressText =
+    document.getElementById("progressText");
 
-                const pausedAt =
-                    parseInt(
-                        localStorage.getItem(
-                            PAUSED_AT_KEY
-                        )
-                    );
+const currentLocation =
+    document.getElementById("currentLocation");
 
+const message =
+    document.getElementById("message");
 
-                if (pausedAt) {
+const lossInfo =
+    document.getElementById("lossInfo");
 
-                    currentTime =
-                        pausedAt;
 
-                }
+/* =========================================================
+   CREATE CONNECTION LOSS POINT
+========================================================= */
 
-            }
+function createConnectionLossPoint() {
 
+    const lossPoint =
+        0.72 +
+        Math.random() * 0.08;
 
-            const elapsed =
-                currentTime -
-                start -
-                pausedTotal;
+    localStorage.setItem(
+        LOSS_KEY,
+        lossPoint.toString()
+    );
 
+}
 
-            let progress =
-                elapsed /
-                JOURNEY_DURATION;
 
+/* =========================================================
+   START / RESUME
+========================================================= */
 
-            progress =
-                Math.max(
-                    0,
-                    Math.min(
-                        1,
-                        progress
-                    )
-                );
+function startJourney() {
 
+    const status =
+        localStorage.getItem(
+            STATUS_KEY
+        ) || "scheduled";
 
-            /*
-               Never allow progress to pass
-               the fixed connection-loss point.
-            */
 
-            if (
-                connectionLossProgress !== null &&
-                progress >= connectionLossProgress
-            ) {
+    /*
+     * First start.
+     */
 
-                progress =
-                    connectionLossProgress;
+    if (
+        !localStorage.getItem(
+            START_KEY
+        )
+    ) {
 
-            }
-
-
-            return progress;
-
-        }
-
-
-        /* =====================================================
-           REAL-TIME TRACKING
-        ====================================================== */
-
-        function updateTracking() {
-
-            if (trackingLost) {
-                return;
-            }
-
-
-            const status =
-                localStorage.getItem(
-                    STATUS_KEY
-                ) || "scheduled";
-
-
-            const progress =
-                getControlledProgress();
-
-
-            /*
-               Connection loss
-            */
-
-            if (
-                connectionLossProgress !== null &&
-                progress >= connectionLossProgress &&
-                status !== "scheduled"
-            ) {
-
-                const lastPoint =
-                    getPointAtProgress(
-                        connectionLossProgress
-                    );
-
-
-                showConnectionLoss(
-                    lastPoint,
-                    connectionLossProgress
-                );
-
-
-                return;
-
-            }
-
-
-            /*
-               Before journey starts
-            */
-
-            if (
-                status === "scheduled"
-            ) {
-
-                updateBeforeStart();
-
-                updateClientStatus(
-                    "scheduled"
-                );
-
-                animationFrame =
-                    requestAnimationFrame(
-                        updateTracking
-                    );
-
-                return;
-
-            }
-
-
-            /*
-               Current route point
-            */
-
-            const point =
-                getPointAtProgress(
-                    progress
-                );
-
-
-            /*
-               Make marker visible
-               after restart.
-            */
-
-            if (
-                marker &&
-                !map.hasLayer(marker)
-            ) {
-
-                marker.addTo(map);
-
-            }
-
-
-            if (marker) {
-
-                marker.setLatLng([
-                    point.lat,
-                    point.lng
-                ]);
-
-            }
-
-
-            updateMarkerPopup(
-                point
-            );
-
-
-            lastKnownLocation =
-                point.location;
-
-
-            /*
-               Journey day
-            */
-
-            let journeyDay =
-                Math.floor(
-                    progress * 7
-                ) + 1;
-
-
-            journeyDay =
-                Math.min(
-                    7,
-                    journeyDay
-                );
-
-
-            /*
-               Current location
-            */
-
-            document.getElementById(
-                "currentLocation"
-            ).innerText =
-                point.location;
-
-
-            /*
-               Journey day
-            */
-
-            document.getElementById(
-                "journeyDay"
-            ).innerText =
-                "Day " +
-                journeyDay +
-                " of 7";
-
-
-            /*
-               Transportation
-            */
-
-            document.getElementById(
-                "transportMode"
-            ).innerText =
-                point.mode;
-
-
-            /*
-               Percentage
-            */
-
-            const percentage =
-                Math.floor(
-                    progress * 100
-                );
-
-
-            document.getElementById(
-                "progressText"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressPercent"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressBar"
-            ).style.width =
-                percentage + "%";
-
-
-            /*
-               Transport stages
-            */
-
-            updateStages(
-                journeyDay
-            );
-
-
-            /*
-               Admin-controlled status
-            */
-
-            updateClientStatus(
-                status
-            );
-
-
-            /*
-               Tracking history
-            */
-
-            document.getElementById(
-                "historyCurrent"
-            ).innerText =
-                status === "paused"
-                    ? "Tracking Paused"
-                    : "Tracking Active";
-
-
-            document.getElementById(
-                "historyCurrentText"
-            ).innerText =
-                point.location +
-                " — " +
-                point.mode;
-
-
-            /*
-               Continue animation
-            */
-
-            animationFrame =
-                requestAnimationFrame(
-                    updateTracking
-                );
-
-        }
-
-
-        /* =====================================================
-           CLIENT STATUS
-        ====================================================== */
-
-        function updateClientStatus(status) {
-
-            const statusText =
-                document.getElementById(
-                    "statusText"
-                );
-
-
-            const liveBadge =
-                document.getElementById(
-                    "liveBadge"
-                );
-
-
-            if (
-                status === "active"
-            ) {
-
-                statusText.innerText =
-                    "🟢 Tracking Active";
-
-                statusText.style.color =
-                    "#00ff88";
-
-
-                liveBadge.innerHTML =
-                    '<span class="live-dot"></span> TRACKING ACTIVE';
-
-                liveBadge.style.color =
-                    "#00ff88";
-
-            }
-
-
-            else if (
-                status === "paused"
-            ) {
-
-                statusText.innerText =
-                    "⏸ Tracking Paused";
-
-                statusText.style.color =
-                    "#FFD700";
-
-
-                liveBadge.innerHTML =
-                    "⏸ TRACKING PAUSED";
-
-                liveBadge.style.color =
-                    "#FFD700";
-
-            }
-
-
-            else if (
-                status === "scheduled"
-            ) {
-
-                statusText.innerText =
-                    "⏳ Tracking Scheduled";
-
-                statusText.style.color =
-                    "#FFD700";
-
-
-                liveBadge.innerHTML =
-                    "⏳ WAITING TO START";
-
-                liveBadge.style.color =
-                    "#FFD700";
-
-            }
-
-        }
-
-
-        /* =====================================================
-           BEFORE JOURNEY START
-        ====================================================== */
-
-        function updateBeforeStart() {
-
-            if (marker) {
-
-                if (
-                    !map.hasLayer(marker)
-                ) {
-
-                    marker.addTo(map);
-
-                }
-
-
-                marker.setLatLng([
-                    route[0].lat,
-                    route[0].lng
-                ]);
-
-                updateMarkerPopup(
-                    route[0]
-                );
-
-            }
-
-
-            document.getElementById(
-                "currentLocation"
-            ).innerText =
-                "Airport City, Accra, Ghana";
-
-
-            document.getElementById(
-                "journeyDay"
-            ).innerText =
-                "Day 1 of 7";
-
-
-            document.getElementById(
-                "transportMode"
-            ).innerText =
-                "🚛 Secure Ground";
-
-
-            document.getElementById(
-                "progressText"
-            ).innerText =
-                "0%";
-
-
-            document.getElementById(
-                "progressPercent"
-            ).innerText =
-                "0%";
-
-
-            document.getElementById(
-                "progressBar"
-            ).style.width =
-                "0%";
-
-
-            document.getElementById(
-                "historyCurrent"
-            ).innerText =
-                "Tracking Scheduled";
-
-
-            document.getElementById(
-                "historyCurrentText"
-            ).innerText =
-                "Waiting for the journey to be started by the tracking administrator.";
-
-
-            updateStages(1);
-
-        }
-
-
-        /* =====================================================
-           TRANSPORT STAGES
-        ====================================================== */
-
-        function updateStages(day) {
-
-            const stages = [
-
-                document.getElementById(
-                    "stage1"
-                ),
-
-                document.getElementById(
-                    "stage2"
-                ),
-
-                document.getElementById(
-                    "stage3"
-                ),
-
-                document.getElementById(
-                    "stage4"
-                )
-
-            ];
-
-
-            stages.forEach(
-                stage => {
-
-                    stage.classList.remove(
-                        "active",
-                        "completed"
-                    );
-
-                }
-            );
-
-
-            if (
-                day <= 1
-            ) {
-
-                stages[0].classList.add(
-                    "active"
-                );
-
-            }
-
-
-            else if (
-                day <= 4
-            ) {
-
-                stages[0].classList.add(
-                    "completed"
-                );
-
-                stages[1].classList.add(
-                    "active"
-                );
-
-            }
-
-
-            else if (
-                day === 5
-            ) {
-
-                stages[0].classList.add(
-                    "completed"
-                );
-
-                stages[1].classList.add(
-                    "completed"
-                );
-
-                stages[2].classList.add(
-                    "active"
-                );
-
-            }
-
-
-            else {
-
-                stages[0].classList.add(
-                    "completed"
-                );
-
-                stages[1].classList.add(
-                    "completed"
-                );
-
-                stages[2].classList.add(
-                    "completed"
-                );
-
-                stages[3].classList.add(
-                    "active"
-                );
-
-            }
-
-        }
-
-
-        /* =====================================================
-           CONNECTION LOST
-        ====================================================== */
-
-        function showConnectionLoss(
-            point,
-            progress
-        ) {
-
-            if (trackingLost) {
-                return;
-            }
-
-
-            trackingLost = true;
-
-            clearAnimationFrame();
-
-
-            lastKnownLocation =
-                point.location;
-
-
-            /*
-               Put marker at the final known
-               location first.
-            */
-
-            if (marker) {
-
-                if (
-                    !map.hasLayer(marker)
-                ) {
-
-                    marker.addTo(map);
-
-                }
-
-
-                marker.setLatLng([
-                    point.lat,
-                    point.lng
-                ]);
-
-
-                updateMarkerPopup(
-                    point
-                );
-
-
-                /*
-                   Remove marker shortly after
-                   displaying last known position.
-                */
-
-                setTimeout(
-                    function () {
-
-                        if (
-                            marker &&
-                            map.hasLayer(marker)
-                        ) {
-
-                            map.removeLayer(
-                                marker
-                            );
-
-                        }
-
-                    },
-                    700
-                );
-
-            }
-
-
-            /*
-               Connection error panel
-            */
-
-            document.getElementById(
-                "connectionError"
-            ).style.display =
-                "block";
-
-
-            document.getElementById(
-                "lastKnownLocation"
-            ).innerText =
-                point.location;
-
-
-            /*
-               Status
-            */
-
-            document.getElementById(
-                "statusText"
-            ).innerText =
-                "⚠️ Connection Lost";
-
-
-            document.getElementById(
-                "statusText"
-            ).style.color =
-                "#ff5555";
-
-
-            document.getElementById(
-                "liveBadge"
-            ).innerHTML =
-                "⚠️ TRACKING CONNECTION LOST";
-
-
-            document.getElementById(
-                "liveBadge"
-            ).style.color =
-                "#ff5555";
-
-
-            /*
-               History
-            */
-
-            document.getElementById(
-                "historyCurrent"
-            ).innerText =
-                "Tracking Connection Lost";
-
-
-            document.getElementById(
-                "historyCurrent"
-            ).style.color =
-                "#ff5555";
-
-
-            document.getElementById(
-                "historyCurrentText"
-            ).innerText =
-                point.location +
-                " — Tracking connection lost.";
-
-
-            /*
-               Freeze progress
-            */
-
-            const percentage =
-                Math.floor(
-                    progress * 100
-                );
-
-
-            document.getElementById(
-                "progressText"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressPercent"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressBar"
-            ).style.width =
-                percentage + "%";
-
-
-            /*
-               Keep USA Ground stage as the
-               last transportation stage.
-            */
-
-            updateStages(6);
-
-        }
-
-
-        /* =====================================================
-           STOP ANIMATION
-        ====================================================== */
-
-        function clearAnimationFrame() {
-
-            if (animationFrame) {
-
-                cancelAnimationFrame(
-                    animationFrame
-                );
-
-                animationFrame = null;
-
-            }
-
-        }
-
-
-        /* =====================================================
-           FIT ROUTE
-        ====================================================== */
-
-        function fitRoute() {
-
-            if (routeLine) {
-
-                map.fitBounds(
-                    routeLine.getBounds(),
-                    {
-                        padding: [40, 40]
-                    }
-                );
-
-            }
-
-        }
-
-
-        /* =====================================================
-           CENTER CURRENT MARKER
-        ====================================================== */
-
-        function centerMarker() {
-
-            if (
-                marker &&
-                map.hasLayer(marker)
-            ) {
-
-                map.setView(
-                    marker.getLatLng(),
-                    6,
-                    {
-                        animate: true
-                    }
-                );
-
-                marker.openPopup();
-
-            }
-
-        }
-
-
-        /* =====================================================
-           GOLD DATA
-        ====================================================== */
-
-        const goldData = {
-
-            holder:
-                "Mary Thomas",
-
-            company:
-                "PAUL & CO LLP",
-
-            goldID:
-                "GT-066",
-
-            weight:
-                "100 KG",
-
-            origin:
-                "Airport City, Accra, Ghana",
-
-            destination:
-                "1 Market Street, San Francisco, CA 94105, USA",
-
-            journey:
-                "7 days",
-
-            status:
-                "Admin Controlled"
-
-        };
-
-
-        console.log(
-            "PAUL & CO LLP — Gold Track System",
-            goldData
+        localStorage.setItem(
+            START_KEY,
+            Date.now().toString()
         );
 
-    </script>
+        localStorage.setItem(
+            PAUSED_TOTAL_KEY,
+            "0"
+        );
 
+    }
+
+
+    /*
+     * Resume after pause.
+     */
+
+    if (
+        status === "paused"
+    ) {
+
+        const pausedAt =
+            parseInt(
+                localStorage.getItem(
+                    PAUSED_AT_KEY
+                )
+            ) || Date.now();
+
+
+        let pausedTotal =
+            parseInt(
+                localStorage.getItem(
+                    PAUSED_TOTAL_KEY
+                )
+            ) || 0;
+
+
+        pausedTotal +=
+            Date.now() - pausedAt;
+
+
+        localStorage.setItem(
+            PAUSED_TOTAL_KEY,
+            pausedTotal.toString()
+        );
+
+
+        localStorage.removeItem(
+            PAUSED_AT_KEY
+        );
+
+    }
+
+
+    /*
+     * Create loss point only
+     * if this journey does not
+     * already have one.
+     */
+
+    if (
+        !localStorage.getItem(
+            LOSS_KEY
+        )
+    ) {
+
+        createConnectionLossPoint();
+
+    }
+
+
+    localStorage.setItem(
+        STATUS_KEY,
+        "active"
+    );
+
+
+    updateDashboard();
+
+
+    showMessage(
+        status === "paused"
+            ? "Tracking has resumed."
+            : "Journey started successfully."
+    );
+
+}
+
+
+/* =========================================================
+   PAUSE
+========================================================= */
+
+function pauseJourney() {
+
+    const status =
+        localStorage.getItem(
+            STATUS_KEY
+        );
+
+
+    if (
+        status !== "active"
+    ) {
+
+        showMessage(
+            "The journey is not currently active."
+        );
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        PAUSED_AT_KEY,
+        Date.now().toString()
+    );
+
+
+    localStorage.setItem(
+        STATUS_KEY,
+        "paused"
+    );
+
+
+    updateDashboard();
+
+
+    showMessage(
+        "Tracking has been paused."
+    );
+
+}
+
+
+/* =========================================================
+   RESTART
+========================================================= */
+
+function restartJourney() {
+
+    const confirmed =
+        confirm(
+            "Restart the gold journey from the beginning?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        START_KEY
+    );
+
+    localStorage.removeItem(
+        PAUSED_AT_KEY
+    );
+
+    localStorage.removeItem(
+        PAUSED_TOTAL_KEY
+    );
+
+    localStorage.removeItem(
+        LOSS_KEY
+    );
+
+
+    /*
+     * New journey gets a new
+     * fixed connection-loss point.
+     */
+
+    createConnectionLossPoint();
+
+
+    localStorage.setItem(
+        STATUS_KEY,
+        "scheduled"
+    );
+
+
+    updateDashboard();
+
+
+    showMessage(
+        "Journey restarted. A new connection-loss point has been created."
+    );
+
+}
+
+
+/* =========================================================
+   SET CONNECTION LOSS
+========================================================= */
+
+function setConnectionLoss() {
+
+    const existing =
+        localStorage.getItem(
+            LOSS_KEY
+        );
+
+
+    if (
+        existing !== null
+    ) {
+
+        const percentage =
+            Math.round(
+                parseFloat(existing) * 100
+            );
+
+
+        showMessage(
+            "Connection loss is already fixed at " +
+            percentage +
+            "%."
+        );
+
+        return;
+
+    }
+
+
+    createConnectionLossPoint();
+
+
+    updateDashboard();
+
+
+    const percentage =
+        Math.round(
+            parseFloat(
+                localStorage.getItem(
+                    LOSS_KEY
+                )
+            ) * 100
+        );
+
+
+    showMessage(
+        "Connection loss fixed at " +
+        percentage +
+        "%."
+    );
+
+}
+
+
+/* =========================================================
+   GET PROGRESS
+========================================================= */
+
+function getJourneyProgress() {
+
+    const status =
+        localStorage.getItem(
+            STATUS_KEY
+        ) || "scheduled";
+
+
+    const start =
+        parseInt(
+            localStorage.getItem(
+                START_KEY
+            )
+        );
+
+
+    if (
+        !start ||
+        status === "scheduled"
+    ) {
+
+        return 0;
+
+    }
+
+
+    let pausedTotal =
+        parseInt(
+            localStorage.getItem(
+                PAUSED_TOTAL_KEY
+            )
+        ) || 0;
+
+
+    let currentTime =
+        Date.now();
+
+
+    if (
+        status === "paused"
+    ) {
+
+        const pausedAt =
+            parseInt(
+                localStorage.getItem(
+                    PAUSED_AT_KEY
+                )
+            );
+
+
+        if (pausedAt) {
+
+            currentTime =
+                pausedAt;
+
+        }
+
+    }
+
+
+    const elapsed =
+        currentTime -
+        start -
+        pausedTotal;
+
+
+    let progress =
+        elapsed /
+        JOURNEY_DURATION;
+
+
+    progress =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                progress
+            )
+        );
+
+
+    /*
+     * Admin dashboard also freezes
+     * at the connection-loss point.
+     */
+
+    const loss =
+        parseFloat(
+            localStorage.getItem(
+                LOSS_KEY
+            )
+        );
+
+
+    if (
+        !isNaN(loss) &&
+        progress >= loss
+    ) {
+
+        progress = loss;
+
+    }
+
+
+    return progress;
+
+}
+
+
+/* =========================================================
+   GET CURRENT LOCATION
+========================================================= */
+
+function getCurrentLocation(progress) {
+
+    const index =
+        Math.floor(
+            progress *
+            (route.length - 1)
+        );
+
+
+    return route[
+        Math.max(
+            0,
+            Math.min(
+                route.length - 1,
+                index
+            )
+        )
+    ];
+
+}
+
+
+/* =========================================================
+   UPDATE DASHBOARD
+========================================================= */
+
+function updateDashboard() {
+
+    const status =
+        localStorage.getItem(
+            STATUS_KEY
+        ) || "scheduled";
+
+
+    /*
+     * STATUS
+     */
+
+    if (
+        status === "active"
+    ) {
+
+        trackingStatus.textContent =
+            "Active";
+
+        statusBadge.textContent =
+            "🟢 TRACKING ACTIVE";
+
+    }
+
+    else if (
+        status === "paused"
+    ) {
+
+        trackingStatus.textContent =
+            "Paused";
+
+        statusBadge.textContent =
+            "⏸ TRACKING PAUSED";
+
+    }
+
+    else if (
+        status === "lost"
+    ) {
+
+        trackingStatus.textContent =
+            "Connection Lost";
+
+        statusBadge.textContent =
+            "⚠️ CONNECTION LOST";
+
+    }
+
+    else {
+
+        trackingStatus.textContent =
+            "Scheduled";
+
+        statusBadge.textContent =
+            "⏳ WAITING TO START";
+
+    }
+
+
+    /*
+     * PROGRESS
+     */
+
+    const progress =
+        getJourneyProgress();
+
+
+    const percentage =
+        Math.floor(
+            progress * 100
+        );
+
+
+    progressFill.style.width =
+        percentage + "%";
+
+
+    progressText.textContent =
+        percentage +
+        "% completed";
+
+
+    /*
+     * LOCATION
+     */
+
+    const start =
+        localStorage.getItem(
+            START_KEY
+        );
+
+
+    if (!start) {
+
+        currentLocation.textContent =
+            "Awaiting journey start...";
+
+    }
+
+    else {
+
+        const point =
+            getCurrentLocation(
+                progress
+            );
+
+
+        currentLocation.textContent =
+            point.location;
+
+    }
+
+
+    /*
+     * LOSS POINT
+     */
+
+    const loss =
+        parseFloat(
+            localStorage.getItem(
+                LOSS_KEY
+            )
+        );
+
+
+    if (!isNaN(loss)) {
+
+        lossInfo.innerHTML =
+            "Connection-loss point: " +
+            "<strong>" +
+            Math.round(loss * 100) +
+            "%</strong>";
+
+    }
+
+    else {
+
+        lossInfo.innerHTML =
+            "Connection-loss point: " +
+            "<strong>Not set</strong>";
+
+    }
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(text) {
+
+    message.textContent =
+        text;
+
+    message.style.display =
+        "block";
+
+
+    setTimeout(
+        function() {
+
+            message.style.display =
+                "none";
+
+        },
+        4000
+    );
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logoutAdmin() {
+
+    sessionStorage.removeItem(
+        "adminLoggedIn"
+    );
+
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+updateDashboard();
+
+
+/* =========================================================
+   LIVE UPDATE
+========================================================= */
+
+setInterval(
+    updateDashboard,
+    1000
+);
+
+
+/* =========================================================
+   LISTEN FOR CLIENT/ADMIN CHANGES
+========================================================= */
+
+window.addEventListener(
+    "storage",
+    function(event) {
+
+        if (
+            event.key === STATUS_KEY ||
+            event.key === START_KEY ||
+            event.key === PAUSED_AT_KEY ||
+            event.key === PAUSED_TOTAL_KEY ||
+            event.key === LOSS_KEY
+        ) {
+
+            updateDashboard();
+
+        }
+
+    }
+);
+
+</script>
 
 </body>
-
 </html>
