@@ -1393,7 +1393,18 @@ window.addEventListener(
     }
 );
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
 </script>
 
+const SUPABASE_URL = "https://uztojwsrkouabbcuyoto.supabase.co";
+const SUPABASE_KEY = "sb_publishable_gyDE5-dnoWRghyAJzLNfEA_zzZM2daH";
+
+const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+    
 </body>
 </html>
