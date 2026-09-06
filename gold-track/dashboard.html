@@ -1321,390 +1321,313 @@
     </footer>
 
 
-    <!-- =====================================================
-         LEAFLET JAVASCRIPT
-    ====================================================== -->
+  <script>
 
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    </script>
+    /* =====================================================
+       SUPABASE CONNECTION
+    ====================================================== */
 
+    const SUPABASE_URL =
+        "https://uztojwsrkouabbcuyoto.supabase.co";
 
-    <script>
+    /*
+       IMPORTANT:
+       Replace YOUR_PUBLISHABLE_KEY with the same
+       Supabase publishable/anon key you already placed
+       in the Admin Dashboard.
+    */
 
-        /* =====================================================
-           CLIENT AUTHENTICATION
-        ===================================================== */
+    const SUPABASE_KEY =
+        "YOUR_PUBLISHABLE_KEY";
 
-        window.addEventListener("load", function () {
-
-            const loginStatus =
-                localStorage.getItem("goldTrackLogin");
-
-            if (loginStatus !== "true") {
-
-                window.location.href = "login.html";
-
-                return;
-
-            }
-
-            initializeMap();
-
-            startTracking();
-
-        });
+    const supabaseClient =
+        supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
 
 
-        /* =====================================================
-           LOGOUT
-        ===================================================== */
+    /* =====================================================
+       CLIENT AUTHENTICATION
+    ====================================================== */
 
-        function logout() {
+    window.addEventListener("load", async function () {
 
-            localStorage.removeItem("goldTrackLogin");
+        const loginStatus =
+            localStorage.getItem("goldTrackLogin");
 
-            localStorage.removeItem("username");
+        if (loginStatus !== "true") {
 
             window.location.href = "login.html";
 
+            return;
+
         }
 
+        initializeMap();
 
-        /* =====================================================
-           ADMIN-CONTROLLED STORAGE KEYS
-        ===================================================== */
+        buildDistanceTable();
 
-        const STATUS_KEY =
-            "goldTrackingStatus";
+        await loadTrackingFromSupabase();
 
-        const START_KEY =
-            "goldJourneyStart";
+        startSupabaseTracking();
 
-        const PAUSED_AT_KEY =
-            "goldJourneyPausedAt";
-
-        const PAUSED_TOTAL_KEY =
-            "goldJourneyPausedTotal";
-
-        const LOSS_KEY =
-            "goldConnectionLossProgress";
+    });
 
 
-        /* =====================================================
-           JOURNEY DURATION
-        ===================================================== */
+    /* =====================================================
+       LOGOUT
+    ====================================================== */
 
-        const JOURNEY_DURATION =
-            7 * 24 * 60 * 60 * 1000;
+    function logout() {
 
+        localStorage.removeItem("goldTrackLogin");
 
-        /* =====================================================
-           MAP VARIABLES
-        ===================================================== */
+        localStorage.removeItem("username");
 
-        let map = null;
+        window.location.href = "login.html";
 
-        let marker = null;
-
-        let routeLine = null;
-
-        let animationFrame = null;
-
-        let connectionLossProgress = null;
-
-        let trackingLost = false;
-
-        let lastKnownLocation =
-            "Airport City, Accra, Ghana";
+    }
 
 
-        /* =====================================================
-           ROUTE
-        ===================================================== */
+    /* =====================================================
+       JOURNEY SETTINGS
+    ====================================================== */
 
-        const route = [
-
-            {
-                lat: 5.6037,
-                lng: -0.1870,
-                location: "Airport City, Accra, Ghana",
-                mode: "🚛 Secure Ground",
-                day: 1
-            },
-
-            {
-                lat: 5.6100,
-                lng: -0.1660,
-                location: "Kotoka International Airport",
-                mode: "✈️ Air Cargo",
-                day: 2
-            },
-
-            {
-                lat: 8.0000,
-                lng: -7.0000,
-                location: "West African Air Transit",
-                mode: "✈️ International Air Transit",
-                day: 2
-            },
-
-            {
-                lat: 15.0000,
-                lng: -25.0000,
-                location: "Atlantic Ocean",
-                mode: "✈️ International Air Transit",
-                day: 3
-            },
-
-            {
-                lat: 25.0000,
-                lng: -42.0000,
-                location: "Atlantic Ocean",
-                mode: "✈️ International Air Transit",
-                day: 3
-            },
-
-            {
-                lat: 34.0000,
-                lng: -70.0000,
-                location: "North Atlantic Transit",
-                mode: "✈️ International Air Transit",
-                day: 4
-            },
-
-            {
-                lat: 39.0000,
-                lng: -95.0000,
-                location: "United States",
-                mode: "🇺🇸 USA Processing",
-                day: 5
-            },
-
-            {
-                lat: 39.0997,
-                lng: -94.5786,
-                location: "Kansas City Region",
-                mode: "🚛 USA Ground",
-                day: 5
-            },
-
-            {
-                lat: 39.7392,
-                lng: -104.9903,
-                location: "Denver, Colorado",
-                mode: "🚛 USA Ground",
-                day: 6
-            },
-
-            {
-                lat: 40.7608,
-                lng: -111.8910,
-                location: "Utah Region",
-                mode: "🚛 USA Ground",
-                day: 6
-            },
-
-            {
-                lat: 38.8026,
-                lng: -116.4194,
-                location: "Western USA",
-                mode: "🚛 USA Ground",
-                day: 7
-            },
-
-            {
-                lat: 36.7783,
-                lng: -119.4179,
-                location: "California, USA",
-                mode: "🚛 Final Ground Transportation",
-                day: 7
-            }
-
-        ];
+    const JOURNEY_DURATION =
+        7 * 24 * 60 * 60 * 1000;
 
 
-        /* =====================================================
-           DISTANCE CALCULATION
-        ====================================================== */
+    /*
+       Gold Track database record.
 
-        function distanceBetween(a, b) {
+       gold_asset_id = 1
+       because the GT-066 tracking record was created
+       from the first gold asset.
+    */
 
-            const R = 6371;
+    const TRACKING_ID = 1;
 
-            const lat1 =
-                a.lat * Math.PI / 180;
 
-            const lat2 =
-                b.lat * Math.PI / 180;
+    /* =====================================================
+       MAP VARIABLES
+    ====================================================== */
 
-            const dLat =
-                (b.lat - a.lat) *
-                Math.PI / 180;
+    let map = null;
 
-            const dLng =
-                (b.lng - a.lng) *
-                Math.PI / 180;
+    let marker = null;
 
-            const x =
-                Math.sin(dLat / 2) *
-                Math.sin(dLat / 2) +
+    let routeLine = null;
 
-                Math.cos(lat1) *
-                Math.cos(lat2) *
-                Math.sin(dLng / 2) *
-                Math.sin(dLng / 2);
+    let refreshTimer = null;
 
-            const y =
-                2 *
-                Math.atan2(
-                    Math.sqrt(x),
-                    Math.sqrt(1 - x)
+    let connectionLossProgress = null;
+
+    let trackingLost = false;
+
+    let lastKnownLocation =
+        "Airport City, Accra, Ghana";
+
+
+    /* =====================================================
+       ROUTE
+    ====================================================== */
+
+    const route = [
+
+        {
+            lat: 5.6037,
+            lng: -0.1870,
+            location: "Airport City, Accra, Ghana",
+            mode: "🚛 Secure Ground",
+            day: 1
+        },
+
+        {
+            lat: 5.6100,
+            lng: -0.1660,
+            location: "Kotoka International Airport",
+            mode: "✈️ Air Cargo",
+            day: 2
+        },
+
+        {
+            lat: 8.0000,
+            lng: -7.0000,
+            location: "West African Air Transit",
+            mode: "✈️ International Air Transit",
+            day: 2
+        },
+
+        {
+            lat: 15.0000,
+            lng: -25.0000,
+            location: "Atlantic Ocean",
+            mode: "✈️ International Air Transit",
+            day: 3
+        },
+
+        {
+            lat: 25.0000,
+            lng: -42.0000,
+            location: "Atlantic Ocean",
+            mode: "✈️ International Air Transit",
+            day: 3
+        },
+
+        {
+            lat: 34.0000,
+            lng: -70.0000,
+            location: "North Atlantic Transit",
+            mode: "✈️ International Air Transit",
+            day: 4
+        },
+
+        {
+            lat: 39.0000,
+            lng: -95.0000,
+            location: "United States",
+            mode: "🇺🇸 USA Processing",
+            day: 5
+        },
+
+        {
+            lat: 39.0997,
+            lng: -94.5786,
+            location: "Kansas City Region",
+            mode: "🚛 USA Ground",
+            day: 5
+        },
+
+        {
+            lat: 39.7392,
+            lng: -104.9903,
+            location: "Denver, Colorado",
+            mode: "🚛 USA Ground",
+            day: 6
+        },
+
+        {
+            lat: 40.7608,
+            lng: -111.8910,
+            location: "Utah Region",
+            mode: "🚛 USA Ground",
+            day: 6
+        },
+
+        {
+            lat: 38.8026,
+            lng: -116.4194,
+            location: "Western USA",
+            mode: "🚛 USA Ground",
+            day: 7
+        },
+
+        {
+            lat: 36.7783,
+            lng: -119.4179,
+            location: "California, USA",
+            mode: "🚛 Final Ground Transportation",
+            day: 7
+        }
+
+    ];
+
+
+    /* =====================================================
+       DISTANCE CALCULATION
+    ====================================================== */
+
+    function distanceBetween(a, b) {
+
+        const R = 6371;
+
+        const lat1 =
+            a.lat * Math.PI / 180;
+
+        const lat2 =
+            b.lat * Math.PI / 180;
+
+        const dLat =
+            (b.lat - a.lat) *
+            Math.PI / 180;
+
+        const dLng =
+            (b.lng - a.lng) *
+            Math.PI / 180;
+
+        const x =
+            Math.sin(dLat / 2) *
+            Math.sin(dLat / 2) +
+
+            Math.cos(lat1) *
+            Math.cos(lat2) *
+            Math.sin(dLng / 2) *
+            Math.sin(dLng / 2);
+
+        const y =
+            2 *
+            Math.atan2(
+                Math.sqrt(x),
+                Math.sqrt(1 - x)
+            );
+
+        return R * y;
+
+    }
+
+
+    /* =====================================================
+       DISTANCE TABLE
+    ====================================================== */
+
+    let segmentDistances = [];
+
+    let totalDistance = 0;
+
+
+    function buildDistanceTable() {
+
+        segmentDistances = [];
+
+        totalDistance = 0;
+
+        for (
+            let i = 0;
+            i < route.length - 1;
+            i++
+        ) {
+
+            const distance =
+                distanceBetween(
+                    route[i],
+                    route[i + 1]
                 );
 
-            return R * y;
+            segmentDistances.push(distance);
+
+            totalDistance += distance;
 
         }
 
-
-        /* =====================================================
-           DISTANCE TABLE
-        ====================================================== */
-
-        let segmentDistances = [];
-
-        let totalDistance = 0;
+    }
 
 
-        function buildDistanceTable() {
+    /* =====================================================
+       GET POINT ON ROUTE
+    ====================================================== */
 
-            segmentDistances = [];
+    function getPointAtProgress(progress) {
 
-            totalDistance = 0;
+        if (progress <= 0) {
 
-            for (
-                let i = 0;
-                i < route.length - 1;
-                i++
-            ) {
-
-                const distance =
-                    distanceBetween(
-                        route[i],
-                        route[i + 1]
-                    );
-
-                segmentDistances.push(
-                    distance
-                );
-
-                totalDistance +=
-                    distance;
-
-            }
+            return {
+                ...route[0]
+            };
 
         }
 
-
-        /* =====================================================
-           GET POINT ON ROUTE
-        ====================================================== */
-
-        function getPointAtProgress(progress) {
-
-            if (progress <= 0) {
-
-                return {
-                    ...route[0]
-                };
-
-            }
-
-            if (progress >= 1) {
-
-                return {
-                    ...route[route.length - 1]
-                };
-
-            }
-
-
-            const targetDistance =
-                totalDistance * progress;
-
-            let accumulated = 0;
-
-
-            for (
-                let i = 0;
-                i < segmentDistances.length;
-                i++
-            ) {
-
-                const segmentDistance =
-                    segmentDistances[i];
-
-
-                if (
-                    accumulated +
-                    segmentDistance >=
-                    targetDistance
-                ) {
-
-                    const remaining =
-                        targetDistance -
-                        accumulated;
-
-
-                    const segmentProgress =
-                        remaining /
-                        segmentDistance;
-
-
-                    const start =
-                        route[i];
-
-                    const end =
-                        route[i + 1];
-
-
-                    return {
-
-                        lat:
-                            start.lat +
-                            (end.lat - start.lat) *
-                            segmentProgress,
-
-                        lng:
-                            start.lng +
-                            (end.lng - start.lng) *
-                            segmentProgress,
-
-                        location:
-                            segmentProgress > 0.5
-                                ? end.location
-                                : start.location,
-
-                        mode:
-                            segmentProgress > 0.5
-                                ? end.mode
-                                : start.mode,
-
-                        day:
-                            segmentProgress > 0.5
-                                ? end.day
-                                : start.day
-
-                    };
-
-                }
-
-
-                accumulated +=
-                    segmentDistance;
-
-            }
-
+        if (progress >= 1) {
 
             return {
                 ...route[route.length - 1]
@@ -1712,215 +1635,1046 @@
 
         }
 
+        const targetDistance =
+            totalDistance * progress;
 
-        /* =====================================================
-           LOAD ADMIN CONNECTION-LOSS POINT
-        ====================================================== */
-
-        function loadConnectionLossPoint() {
-
-            const saved =
-                localStorage.getItem(
-                    LOSS_KEY
-                );
+        let accumulated = 0;
 
 
-            if (saved !== null) {
+        for (
+            let i = 0;
+            i < segmentDistances.length;
+            i++
+        ) {
 
-                const parsed =
-                    parseFloat(saved);
+            const segmentDistance =
+                segmentDistances[i];
 
+            if (
+                accumulated +
+                segmentDistance >=
+                targetDistance
+            ) {
 
-                if (!isNaN(parsed)) {
+                const remaining =
+                    targetDistance -
+                    accumulated;
 
-                    connectionLossProgress =
-                        parsed;
+                const segmentProgress =
+                    remaining /
+                    segmentDistance;
 
-                    return;
+                const start =
+                    route[i];
 
-                }
+                const end =
+                    route[i + 1];
+
+                return {
+
+                    lat:
+                        start.lat +
+                        (end.lat - start.lat) *
+                        segmentProgress,
+
+                    lng:
+                        start.lng +
+                        (end.lng - start.lng) *
+                        segmentProgress,
+
+                    location:
+                        segmentProgress > 0.5
+                            ? end.location
+                            : start.location,
+
+                    mode:
+                        segmentProgress > 0.5
+                            ? end.mode
+                            : start.mode,
+
+                    day:
+                        segmentProgress > 0.5
+                            ? end.day
+                            : start.day
+
+                };
 
             }
 
-
-            /*
-               IMPORTANT:
-
-               The client does NOT create a random
-               connection-loss point.
-
-               The Admin creates the fixed point.
-
-               This ensures the Admin remains the
-               controller of the journey.
-            */
-
-            connectionLossProgress = null;
+            accumulated +=
+                segmentDistance;
 
         }
 
+        return {
+            ...route[route.length - 1]
+        };
 
-        /* =====================================================
-           MAP INITIALIZATION
-        ====================================================== */
-
-        function initializeMap() {
-
-            map =
-                L.map("map", {
-                    zoomControl: true
-                }).setView(
-                    [20, -45],
-                    3
-                );
+    }
 
 
-            /* STREET MAP */
+    /* =====================================================
+       MAP INITIALIZATION
+    ====================================================== */
 
-            const streetLayer =
-                L.tileLayer(
-                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    {
-                        attribution:
-                            "&copy; OpenStreetMap contributors",
+    function initializeMap() {
 
-                        maxZoom: 19
-                    }
-                );
-
-
-            /* SATELLITE */
-
-            const satelliteLayer =
-                L.tileLayer(
-                    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-                    {
-                        attribution:
-                            "Tiles &copy; Esri",
-
-                        maxZoom: 19
-                    }
-                );
+        map =
+            L.map("map", {
+                zoomControl: true
+            }).setView(
+                [20, -45],
+                3
+            );
 
 
-            /* TERRAIN */
-
-            const terrainLayer =
-                L.tileLayer(
-                    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-                    {
-                        attribution:
-                            "Map data &copy; OpenStreetMap contributors, SRTM | Map style &copy; OpenTopoMap",
-
-                        maxZoom: 17
-                    }
-                );
-
-
-            streetLayer.addTo(map);
-
-
-            const baseMaps = {
-
-                "🗺️ Street Map":
-                    streetLayer,
-
-                "🛰️ Satellite":
-                    satelliteLayer,
-
-                "⛰️ Terrain":
-                    terrainLayer
-
-            };
-
-
-            L.control.layers(
-                baseMaps,
-                null,
+        const streetLayer =
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
-                    collapsed: false
+                    attribution:
+                        "&copy; OpenStreetMap contributors",
+
+                    maxZoom: 19
+                }
+            );
+
+
+        const satelliteLayer =
+            L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                {
+                    attribution:
+                        "Tiles &copy; Esri",
+
+                    maxZoom: 19
+                }
+            );
+
+
+        const terrainLayer =
+            L.tileLayer(
+                "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+                {
+                    attribution:
+                        "Map data &copy; OpenStreetMap contributors, SRTM | Map style &copy; OpenTopoMap",
+
+                    maxZoom: 17
+                }
+            );
+
+
+        streetLayer.addTo(map);
+
+
+        const baseMaps = {
+
+            "🗺️ Street Map":
+                streetLayer,
+
+            "🛰️ Satellite":
+                satelliteLayer,
+
+            "⛰️ Terrain":
+                terrainLayer
+
+        };
+
+
+        L.control.layers(
+            baseMaps,
+            null,
+            {
+                collapsed: false
+            }
+        ).addTo(map);
+
+
+        const routeCoordinates =
+            route.map(point => [
+                point.lat,
+                point.lng
+            ]);
+
+
+        routeLine =
+            L.polyline(
+                routeCoordinates,
+                {
+                    color: "#FFD700",
+                    weight: 4,
+                    opacity: .8,
+                    dashArray: "8 8"
                 }
             ).addTo(map);
 
 
-            /* ROUTE */
+        /* ORIGIN */
 
-            const routeCoordinates =
-                route.map(point => [
-                    point.lat,
-                    point.lng
-                ]);
+        L.marker(
+            [5.6037, -0.1870]
+        )
+        .addTo(map)
+        .bindPopup(`
+            <div class="popup-title">
+                🇬🇭 Origin
+            </div>
 
+            <p>
+                Airport City, Accra, Ghana
+            </p>
 
-            routeLine =
-                L.polyline(
-                    routeCoordinates,
-                    {
-                        color: "#FFD700",
-                        weight: 4,
-                        opacity: .8,
-                        dashArray: "8 8"
-                    }
-                ).addTo(map);
-
-
-            /* ORIGIN MARKER */
-
-            L.marker(
-                [5.6037, -0.1870]
-            )
-            .addTo(map)
-            .bindPopup(`
-                <div class="popup-title">
-                    🇬🇭 Origin
-                </div>
-
-                <p>
-                    Airport City, Accra, Ghana
-                </p>
-
-                <p>
-                    Secure transportation origin
-                </p>
-            `);
+            <p>
+                Secure transportation origin
+            </p>
+        `);
 
 
-            /* DESTINATION MARKER */
+        /* DESTINATION */
 
-            L.marker(
-                [36.7783, -119.4179]
-            )
-            .addTo(map)
-            .bindPopup(`
-                <div class="popup-title">
-                    🇺🇸 Intended Destination
-                </div>
+        L.marker(
+            [36.7783, -119.4179]
+        )
+        .addTo(map)
+        .bindPopup(`
+            <div class="popup-title">
+                🇺🇸 Intended Destination
+            </div>
 
-                <p>
-                    California, USA
-                </p>
+            <p>
+                California, USA
+            </p>
 
-                <p>
-                    220 GOLDEN GATE AVE APT 83S
-                    SAN FRANCISCO, CA
-                </p>
-            `);
+            <p>
+                220 GOLDEN GATE AVE APT 83S
+                SAN FRANCISCO, CA
+            </p>
+        `);
 
 
-            /* TRACKING MARKER */
+        /* TRACKING MARKER */
 
-            marker =
-                L.marker([
-                    route[0].lat,
-                    route[0].lng
-                ])
-                .addTo(map);
+        marker =
+            L.marker([
+                route[0].lat,
+                route[0].lng
+            ])
+            .addTo(map);
+
+
+        updateMarkerPopup(
+            route[0]
+        );
+
+
+        map.fitBounds(
+            routeLine.getBounds(),
+            {
+                padding: [40, 40]
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       MARKER POPUP
+    ====================================================== */
+
+    function updateMarkerPopup(point) {
+
+        if (!marker) {
+            return;
+        }
+
+        marker.bindPopup(`
+
+            <div class="popup-title">
+                PAUL & CO LLP
+            </div>
+
+            <p>
+                <strong>Gold ID:</strong>
+                GT-066
+            </p>
+
+            <p>
+                <strong>Weight:</strong>
+                100 KG
+            </p>
+
+            <p>
+                <strong>Location:</strong>
+                ${point.location}
+            </p>
+
+            <p class="popup-green">
+                🟢 Tracking Active
+            </p>
+
+        `);
+
+    }
+
+
+    /* =====================================================
+       LOAD TRACKING FROM SUPABASE
+    ====================================================== */
+
+    async function loadTrackingFromSupabase() {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("tracking")
+            .select("*")
+            .eq("id", TRACKING_ID)
+            .single();
+
+
+        if (error) {
+
+            console.error(
+                "Supabase tracking read error:",
+                error
+            );
+
+            updateClientStatus(
+                "scheduled"
+            );
+
+            return;
+
+        }
+
+
+        if (!data) {
+            return;
+        }
+
+
+        /*
+           Connection-loss point created by Admin.
+        */
+
+        connectionLossProgress =
+            data.loss_progress !== null
+                ? Number(data.loss_progress)
+                : null;
+
+
+        /*
+           Admin has explicitly triggered
+           connection loss.
+        */
+
+        if (data.connection_lost === true) {
+
+            const lossProgress =
+                connectionLossProgress !== null
+                    ? connectionLossProgress
+                    : Number(data.progress || 0);
+
+            const lossPoint =
+                getPointAtProgress(
+                    lossProgress
+                );
+
+            showConnectionLoss(
+                lossPoint,
+                lossProgress
+            );
+
+            return;
+
+        }
+
+
+        /*
+           Admin-controlled progress.
+        */
+
+        const progress =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    Number(data.progress || 0)
+                )
+            );
+
+
+        updateClientFromDatabase(
+            data,
+            progress
+        );
+
+    }
+
+
+    /* =====================================================
+       UPDATE CLIENT FROM DATABASE
+    ====================================================== */
+
+    function updateClientFromDatabase(
+        data,
+        progress
+    ) {
+
+        if (trackingLost) {
+            return;
+        }
+
+
+        const status =
+            data.status || "not_started";
+
+
+        /* WAITING */
+
+        if (
+            status === "not_started" ||
+            status === "scheduled"
+        ) {
+
+            updateBeforeStart();
+
+            updateClientStatus(
+                "scheduled"
+            );
+
+            return;
+
+        }
+
+
+        /* CONNECTION LOST */
+
+        if (
+            data.connection_lost === true
+        ) {
+
+            const lossProgress =
+                connectionLossProgress !== null
+                    ? connectionLossProgress
+                    : progress;
+
+            const point =
+                getPointAtProgress(
+                    lossProgress
+                );
+
+            showConnectionLoss(
+                point,
+                lossProgress
+            );
+
+            return;
+
+        }
+
+
+        /* CURRENT POINT */
+
+        const point =
+            getPointAtProgress(
+                progress
+            );
+
+
+        if (
+            marker &&
+            !map.hasLayer(marker)
+        ) {
+
+            marker.addTo(map);
+
+        }
+
+
+        if (marker) {
+
+            marker.setLatLng([
+                point.lat,
+                point.lng
+            ]);
+
+        }
+
+
+        updateMarkerPopup(
+            point
+        );
+
+
+        lastKnownLocation =
+            point.location;
+
+
+        /* JOURNEY DAY */
+
+        let journeyDay =
+            Math.floor(
+                progress * 7
+            ) + 1;
+
+
+        journeyDay =
+            Math.min(
+                7,
+                journeyDay
+            );
+
+
+        /* LOCATION */
+
+        document.getElementById(
+            "currentLocation"
+        ).innerText =
+            point.location;
+
+
+        /* DAY */
+
+        document.getElementById(
+            "journeyDay"
+        ).innerText =
+            "Day " +
+            journeyDay +
+            " of 7";
+
+
+        /* TRANSPORTATION */
+
+        document.getElementById(
+            "transportMode"
+        ).innerText =
+            point.mode;
+
+
+        /* PROGRESS */
+
+        const percentage =
+            Math.floor(
+                progress * 100
+            );
+
+
+        document.getElementById(
+            "progressText"
+        ).innerText =
+            percentage + "%";
+
+
+        document.getElementById(
+            "progressPercent"
+        ).innerText =
+            percentage + "%";
+
+
+        document.getElementById(
+            "progressBar"
+        ).style.width =
+            percentage + "%";
+
+
+        /* STAGES */
+
+        updateStages(
+            journeyDay
+        );
+
+
+        /* STATUS */
+
+        updateClientStatus(
+            status === "paused"
+                ? "paused"
+                : "active"
+        );
+
+
+        /* HISTORY */
+
+        document.getElementById(
+            "historyCurrent"
+        ).innerText =
+            status === "paused"
+                ? "Tracking Paused"
+                : "Tracking Active";
+
+
+        document.getElementById(
+            "historyCurrentText"
+        ).innerText =
+            point.location +
+            " — " +
+            point.mode;
+
+    }
+
+
+    /* =====================================================
+       REAL-TIME SUPABASE POLLING
+    ====================================================== */
+
+    function startSupabaseTracking() {
+
+        if (refreshTimer) {
+
+            clearInterval(
+                refreshTimer
+            );
+
+        }
+
+
+        /*
+           Check Supabase every 2 seconds.
+
+           This allows the Client Dashboard to receive
+           Admin Start / Pause / Restart / Connection Loss.
+        */
+
+        refreshTimer =
+            setInterval(
+                async function () {
+
+                    await loadTrackingFromSupabase();
+
+                },
+                2000
+            );
+
+    }
+
+
+    /* =====================================================
+       CLIENT STATUS
+    ====================================================== */
+
+    function updateClientStatus(status) {
+
+        const statusText =
+            document.getElementById(
+                "statusText"
+            );
+
+        const liveBadge =
+            document.getElementById(
+                "liveBadge"
+            );
+
+
+        if (
+            status === "active"
+        ) {
+
+            statusText.innerText =
+                "🟢 Tracking Active";
+
+            statusText.style.color =
+                "#00ff88";
+
+
+            liveBadge.innerHTML =
+                '<span class="live-dot"></span> TRACKING ACTIVE';
+
+            liveBadge.style.color =
+                "#00ff88";
+
+        }
+
+
+        else if (
+            status === "paused"
+        ) {
+
+            statusText.innerText =
+                "⏸ Tracking Paused";
+
+            statusText.style.color =
+                "#FFD700";
+
+
+            liveBadge.innerHTML =
+                "⏸ TRACKING PAUSED";
+
+            liveBadge.style.color =
+                "#FFD700";
+
+        }
+
+
+        else {
+
+            statusText.innerText =
+                "⏳ Tracking Scheduled";
+
+            statusText.style.color =
+                "#FFD700";
+
+
+            liveBadge.innerHTML =
+                "⏳ WAITING TO START";
+
+            liveBadge.style.color =
+                "#FFD700";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       BEFORE JOURNEY START
+    ====================================================== */
+
+    function updateBeforeStart() {
+
+        trackingLost = false;
+
+
+        if (marker) {
+
+            if (
+                !map.hasLayer(marker)
+            ) {
+
+                marker.addTo(map);
+
+            }
+
+
+            marker.setLatLng([
+                route[0].lat,
+                route[0].lng
+            ]);
 
 
             updateMarkerPopup(
                 route[0]
             );
 
+        }
+
+
+        document.getElementById(
+            "currentLocation"
+        ).innerText =
+            "Airport City, Accra, Ghana";
+
+
+        document.getElementById(
+            "journeyDay"
+        ).innerText =
+            "Day 1 of 7";
+
+
+        document.getElementById(
+            "transportMode"
+        ).innerText =
+            "🚛 Secure Ground";
+
+
+        document.getElementById(
+            "progressText"
+        ).innerText =
+            "0%";
+
+
+        document.getElementById(
+            "progressPercent"
+        ).innerText =
+            "0%";
+
+
+        document.getElementById(
+            "progressBar"
+        ).style.width =
+            "0%";
+
+
+        document.getElementById(
+            "historyCurrent"
+        ).innerText =
+            "Tracking Scheduled";
+
+
+        document.getElementById(
+            "historyCurrentText"
+        ).innerText =
+            "Waiting for the journey to be started by the tracking administrator.";
+
+
+        updateStages(1);
+
+    }
+
+
+    /* =====================================================
+       TRANSPORT STAGES
+    ====================================================== */
+
+    function updateStages(day) {
+
+        const stages = [
+
+            document.getElementById(
+                "stage1"
+            ),
+
+            document.getElementById(
+                "stage2"
+            ),
+
+            document.getElementById(
+                "stage3"
+            ),
+
+            document.getElementById(
+                "stage4"
+            )
+
+        ];
+
+
+        stages.forEach(
+            stage => {
+
+                stage.classList.remove(
+                    "active",
+                    "completed"
+                );
+
+            }
+        );
+
+
+        if (
+            day <= 1
+        ) {
+
+            stages[0].classList.add(
+                "active"
+            );
+
+        }
+
+
+        else if (
+            day <= 4
+        ) {
+
+            stages[0].classList.add(
+                "completed"
+            );
+
+            stages[1].classList.add(
+                "active"
+            );
+
+        }
+
+
+        else if (
+            day === 5
+        ) {
+
+            stages[0].classList.add(
+                "completed"
+            );
+
+            stages[1].classList.add(
+                "completed"
+            );
+
+            stages[2].classList.add(
+                "active"
+            );
+
+        }
+
+
+        else {
+
+            stages[0].classList.add(
+                "completed"
+            );
+
+            stages[1].classList.add(
+                "completed"
+            );
+
+            stages[2].classList.add(
+                "completed"
+            );
+
+            stages[3].classList.add(
+                "active"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       CONNECTION LOST
+    ====================================================== */
+
+    function showConnectionLoss(
+        point,
+        progress
+    ) {
+
+        if (trackingLost) {
+            return;
+        }
+
+
+        trackingLost = true;
+
+
+        lastKnownLocation =
+            point.location;
+
+
+        if (marker) {
+
+            if (
+                !map.hasLayer(marker)
+            ) {
+
+                marker.addTo(map);
+
+            }
+
+
+            marker.setLatLng([
+                point.lat,
+                point.lng
+            ]);
+
+
+            updateMarkerPopup(
+                point
+            );
+
+
+            setTimeout(
+                function () {
+
+                    if (
+                        marker &&
+                        map.hasLayer(marker)
+                    ) {
+
+                        map.removeLayer(
+                            marker
+                        );
+
+                    }
+
+                },
+                700
+            );
+
+        }
+
+
+        document.getElementById(
+            "connectionError"
+        ).style.display =
+            "block";
+
+
+        document.getElementById(
+            "lastKnownLocation"
+        ).innerText =
+            point.location;
+
+
+        document.getElementById(
+            "statusText"
+        ).innerText =
+            "⚠️ Connection Lost";
+
+
+        document.getElementById(
+            "statusText"
+        ).style.color =
+            "#ff5555";
+
+
+        document.getElementById(
+            "liveBadge"
+        ).innerHTML =
+            "⚠️ TRACKING CONNECTION LOST";
+
+
+        document.getElementById(
+            "liveBadge"
+        ).style.color =
+            "#ff5555";
+
+
+        document.getElementById(
+            "historyCurrent"
+        ).innerText =
+            "Tracking Connection Lost";
+
+
+        document.getElementById(
+            "historyCurrent"
+        ).style.color =
+            "#ff5555";
+
+
+        document.getElementById(
+            "historyCurrentText"
+        ).innerText =
+            point.location +
+            " — Tracking connection lost.";
+
+
+        const percentage =
+            Math.floor(
+                progress * 100
+            );
+
+
+        document.getElementById(
+            "progressText"
+        ).innerText =
+            percentage + "%";
+
+
+        document.getElementById(
+            "progressPercent"
+        ).innerText =
+            percentage + "%";
+
+
+        document.getElementById(
+            "progressBar"
+        ).style.width =
+            percentage + "%";
+
+
+        updateStages(6);
+
+    }
+
+
+    /* =====================================================
+       FIT ROUTE
+    ====================================================== */
+
+    function fitRoute() {
+
+        if (routeLine) {
 
             map.fitBounds(
                 routeLine.getBounds(),
@@ -1931,983 +2685,74 @@
 
         }
 
+    }
 
-        /* =====================================================
-           MARKER POPUP
-        ====================================================== */
 
-        function updateMarkerPopup(point) {
+    /* =====================================================
+       CENTER CURRENT MARKER
+    ====================================================== */
 
-            if (!marker) {
-                return;
-            }
+    function centerMarker() {
 
-
-            marker.bindPopup(`
-
-                <div class="popup-title">
-                    PAUL & CO LLP
-                </div>
-
-                <p>
-                    <strong>Gold ID:</strong>
-                    GT-066
-                </p>
-
-                <p>
-                    <strong>Weight:</strong>
-                    100 KG
-                </p>
-
-                <p>
-                    <strong>Location:</strong>
-                    ${point.location}
-                </p>
-
-                <p class="popup-green">
-                    🟢 Tracking Active
-                </p>
-
-            `);
-
-        }
-
-
-        /* =====================================================
-           START TRACKING
-        ====================================================== */
-
-        function startTracking() {
-
-            clearAnimationFrame();
-
-            buildDistanceTable();
-
-            loadConnectionLossPoint();
-
-            trackingLost = false;
-
-
-            document.getElementById(
-                "connectionError"
-            ).style.display = "none";
-
-
-            requestAnimationFrame(
-                updateTracking
-            );
-
-        }
-
-
-        /* =====================================================
-           GET ADMIN-CONTROLLED PROGRESS
-        ====================================================== */
-
-        function getControlledProgress() {
-
-            const status =
-                localStorage.getItem(
-                    STATUS_KEY
-                ) || "scheduled";
-
-
-            const start =
-                parseInt(
-                    localStorage.getItem(
-                        START_KEY
-                    )
-                );
-
-
-            if (
-                !start ||
-                status === "scheduled"
-            ) {
-
-                return 0;
-
-            }
-
-
-            let pausedTotal =
-                parseInt(
-                    localStorage.getItem(
-                        PAUSED_TOTAL_KEY
-                    )
-                ) || 0;
-
-
-            let currentTime =
-                Date.now();
-
-
-            /*
-               When paused, stop the clock
-               at the exact pause time.
-            */
-
-            if (
-                status === "paused"
-            ) {
-
-                const pausedAt =
-                    parseInt(
-                        localStorage.getItem(
-                            PAUSED_AT_KEY
-                        )
-                    );
-
-
-                if (pausedAt) {
-
-                    currentTime =
-                        pausedAt;
-
-                }
-
-            }
-
-
-            const elapsed =
-                currentTime -
-                start -
-                pausedTotal;
-
-
-            let progress =
-                elapsed /
-                JOURNEY_DURATION;
-
-
-            progress =
-                Math.max(
-                    0,
-                    Math.min(
-                        1,
-                        progress
-                    )
-                );
-
-
-            /*
-               Never allow progress to pass
-               the fixed connection-loss point.
-            */
-
-            if (
-                connectionLossProgress !== null &&
-                progress >= connectionLossProgress
-            ) {
-
-                progress =
-                    connectionLossProgress;
-
-            }
-
-
-            return progress;
-
-        }
-
-
-        /* =====================================================
-           REAL-TIME TRACKING
-        ====================================================== */
-
-        function updateTracking() {
-
-            if (trackingLost) {
-                return;
-            }
-
-
-            const status =
-                localStorage.getItem(
-                    STATUS_KEY
-                ) || "scheduled";
-
-
-            const progress =
-                getControlledProgress();
-
-
-            /*
-               Connection loss
-            */
-
-            if (
-                connectionLossProgress !== null &&
-                progress >= connectionLossProgress &&
-                status !== "scheduled"
-            ) {
-
-                const lastPoint =
-                    getPointAtProgress(
-                        connectionLossProgress
-                    );
-
-
-                showConnectionLoss(
-                    lastPoint,
-                    connectionLossProgress
-                );
-
-
-                return;
-
-            }
-
-
-            /*
-               Before journey starts
-            */
-
-            if (
-                status === "scheduled"
-            ) {
-
-                updateBeforeStart();
-
-                updateClientStatus(
-                    "scheduled"
-                );
-
-                animationFrame =
-                    requestAnimationFrame(
-                        updateTracking
-                    );
-
-                return;
-
-            }
-
-
-            /*
-               Current route point
-            */
-
-            const point =
-                getPointAtProgress(
-                    progress
-                );
-
-
-            /*
-               Make marker visible
-               after restart.
-            */
-
-            if (
-                marker &&
-                !map.hasLayer(marker)
-            ) {
-
-                marker.addTo(map);
-
-            }
-
-
-            if (marker) {
-
-                marker.setLatLng([
-                    point.lat,
-                    point.lng
-                ]);
-
-            }
-
-
-            updateMarkerPopup(
-                point
-            );
-
-
-            lastKnownLocation =
-                point.location;
-
-
-            /*
-               Journey day
-            */
-
-            let journeyDay =
-                Math.floor(
-                    progress * 7
-                ) + 1;
-
-
-            journeyDay =
-                Math.min(
-                    7,
-                    journeyDay
-                );
-
-
-            /*
-               Current location
-            */
-
-            document.getElementById(
-                "currentLocation"
-            ).innerText =
-                point.location;
-
-
-            /*
-               Journey day
-            */
-
-            document.getElementById(
-                "journeyDay"
-            ).innerText =
-                "Day " +
-                journeyDay +
-                " of 7";
-
-
-            /*
-               Transportation
-            */
-
-            document.getElementById(
-                "transportMode"
-            ).innerText =
-                point.mode;
-
-
-            /*
-               Percentage
-            */
-
-            const percentage =
-                Math.floor(
-                    progress * 100
-                );
-
-
-            document.getElementById(
-                "progressText"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressPercent"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressBar"
-            ).style.width =
-                percentage + "%";
-
-
-            /*
-               Transport stages
-            */
-
-            updateStages(
-                journeyDay
-            );
-
-
-            /*
-               Admin-controlled status
-            */
-
-            updateClientStatus(
-                status
-            );
-
-
-            /*
-               Tracking history
-            */
-
-            document.getElementById(
-                "historyCurrent"
-            ).innerText =
-                status === "paused"
-                    ? "Tracking Paused"
-                    : "Tracking Active";
-
-
-            document.getElementById(
-                "historyCurrentText"
-            ).innerText =
-                point.location +
-                " — " +
-                point.mode;
-
-
-            /*
-               Continue animation
-            */
-
-            animationFrame =
-                requestAnimationFrame(
-                    updateTracking
-                );
-
-        }
-
-
-        /* =====================================================
-           CLIENT STATUS
-        ====================================================== */
-
-        function updateClientStatus(status) {
-
-            const statusText =
-                document.getElementById(
-                    "statusText"
-                );
-
-
-            const liveBadge =
-                document.getElementById(
-                    "liveBadge"
-                );
-
-
-            if (
-                status === "active"
-            ) {
-
-                statusText.innerText =
-                    "🟢 Tracking Active";
-
-                statusText.style.color =
-                    "#00ff88";
-
-
-                liveBadge.innerHTML =
-                    '<span class="live-dot"></span> TRACKING ACTIVE';
-
-                liveBadge.style.color =
-                    "#00ff88";
-
-            }
-
-
-            else if (
-                status === "paused"
-            ) {
-
-                statusText.innerText =
-                    "⏸ Tracking Paused";
-
-                statusText.style.color =
-                    "#FFD700";
-
-
-                liveBadge.innerHTML =
-                    "⏸ TRACKING PAUSED";
-
-                liveBadge.style.color =
-                    "#FFD700";
-
-            }
-
-
-            else if (
-                status === "scheduled"
-            ) {
-
-                statusText.innerText =
-                    "⏳ Tracking Scheduled";
-
-                statusText.style.color =
-                    "#FFD700";
-
-
-                liveBadge.innerHTML =
-                    "⏳ WAITING TO START";
-
-                liveBadge.style.color =
-                    "#FFD700";
-
-            }
-
-        }
-
-
-        /* =====================================================
-           BEFORE JOURNEY START
-        ====================================================== */
-
-        function updateBeforeStart() {
-
-            if (marker) {
-
-                if (
-                    !map.hasLayer(marker)
-                ) {
-
-                    marker.addTo(map);
-
-                }
-
-
-                marker.setLatLng([
-                    route[0].lat,
-                    route[0].lng
-                ]);
-
-                updateMarkerPopup(
-                    route[0]
-                );
-
-            }
-
-
-            document.getElementById(
-                "currentLocation"
-            ).innerText =
-                "Airport City, Accra, Ghana";
-
-
-            document.getElementById(
-                "journeyDay"
-            ).innerText =
-                "Day 1 of 7";
-
-
-            document.getElementById(
-                "transportMode"
-            ).innerText =
-                "🚛 Secure Ground";
-
-
-            document.getElementById(
-                "progressText"
-            ).innerText =
-                "0%";
-
-
-            document.getElementById(
-                "progressPercent"
-            ).innerText =
-                "0%";
-
-
-            document.getElementById(
-                "progressBar"
-            ).style.width =
-                "0%";
-
-
-            document.getElementById(
-                "historyCurrent"
-            ).innerText =
-                "Tracking Scheduled";
-
-
-            document.getElementById(
-                "historyCurrentText"
-            ).innerText =
-                "Waiting for the journey to be started by the tracking administrator.";
-
-
-            updateStages(1);
-
-        }
-
-
-        /* =====================================================
-           TRANSPORT STAGES
-        ====================================================== */
-
-        function updateStages(day) {
-
-            const stages = [
-
-                document.getElementById(
-                    "stage1"
-                ),
-
-                document.getElementById(
-                    "stage2"
-                ),
-
-                document.getElementById(
-                    "stage3"
-                ),
-
-                document.getElementById(
-                    "stage4"
-                )
-
-            ];
-
-
-            stages.forEach(
-                stage => {
-
-                    stage.classList.remove(
-                        "active",
-                        "completed"
-                    );
-
-                }
-            );
-
-
-            if (
-                day <= 1
-            ) {
-
-                stages[0].classList.add(
-                    "active"
-                );
-
-            }
-
-
-            else if (
-                day <= 4
-            ) {
-
-                stages[0].classList.add(
-                    "completed"
-                );
-
-                stages[1].classList.add(
-                    "active"
-                );
-
-            }
-
-
-            else if (
-                day === 5
-            ) {
-
-                stages[0].classList.add(
-                    "completed"
-                );
-
-                stages[1].classList.add(
-                    "completed"
-                );
-
-                stages[2].classList.add(
-                    "active"
-                );
-
-            }
-
-
-            else {
-
-                stages[0].classList.add(
-                    "completed"
-                );
-
-                stages[1].classList.add(
-                    "completed"
-                );
-
-                stages[2].classList.add(
-                    "completed"
-                );
-
-                stages[3].classList.add(
-                    "active"
-                );
-
-            }
-
-        }
-
-
-        /* =====================================================
-           CONNECTION LOST
-        ====================================================== */
-
-        function showConnectionLoss(
-            point,
-            progress
+        if (
+            marker &&
+            map.hasLayer(marker)
         ) {
 
-            if (trackingLost) {
-                return;
-            }
-
-
-            trackingLost = true;
-
-            clearAnimationFrame();
-
-
-            lastKnownLocation =
-                point.location;
-
-
-            /*
-               Put marker at the final known
-               location first.
-            */
-
-            if (marker) {
-
-                if (
-                    !map.hasLayer(marker)
-                ) {
-
-                    marker.addTo(map);
-
+            map.setView(
+                marker.getLatLng(),
+                6,
+                {
+                    animate: true
                 }
+            );
 
-
-                marker.setLatLng([
-                    point.lat,
-                    point.lng
-                ]);
-
-
-                updateMarkerPopup(
-                    point
-                );
-
-
-                /*
-                   Remove marker shortly after
-                   displaying last known position.
-                */
-
-                setTimeout(
-                    function () {
-
-                        if (
-                            marker &&
-                            map.hasLayer(marker)
-                        ) {
-
-                            map.removeLayer(
-                                marker
-                            );
-
-                        }
-
-                    },
-                    700
-                );
-
-            }
-
-
-            /*
-               Connection error panel
-            */
-
-            document.getElementById(
-                "connectionError"
-            ).style.display =
-                "block";
-
-
-            document.getElementById(
-                "lastKnownLocation"
-            ).innerText =
-                point.location;
-
-
-            /*
-               Status
-            */
-
-            document.getElementById(
-                "statusText"
-            ).innerText =
-                "⚠️ Connection Lost";
-
-
-            document.getElementById(
-                "statusText"
-            ).style.color =
-                "#ff5555";
-
-
-            document.getElementById(
-                "liveBadge"
-            ).innerHTML =
-                "⚠️ TRACKING CONNECTION LOST";
-
-
-            document.getElementById(
-                "liveBadge"
-            ).style.color =
-                "#ff5555";
-
-
-            /*
-               History
-            */
-
-            document.getElementById(
-                "historyCurrent"
-            ).innerText =
-                "Tracking Connection Lost";
-
-
-            document.getElementById(
-                "historyCurrent"
-            ).style.color =
-                "#ff5555";
-
-
-            document.getElementById(
-                "historyCurrentText"
-            ).innerText =
-                point.location +
-                " — Tracking connection lost.";
-
-
-            /*
-               Freeze progress
-            */
-
-            const percentage =
-                Math.floor(
-                    progress * 100
-                );
-
-
-            document.getElementById(
-                "progressText"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressPercent"
-            ).innerText =
-                percentage + "%";
-
-
-            document.getElementById(
-                "progressBar"
-            ).style.width =
-                percentage + "%";
-
-
-            /*
-               Keep USA Ground stage as the
-               last transportation stage.
-            */
-
-            updateStages(6);
+            marker.openPopup();
 
         }
 
-
-        /* =====================================================
-           STOP ANIMATION
-        ====================================================== */
-
-        function clearAnimationFrame() {
-
-            if (animationFrame) {
-
-                cancelAnimationFrame(
-                    animationFrame
-                );
-
-                animationFrame = null;
-
-            }
-
-        }
+    }
 
 
-        /* =====================================================
-           FIT ROUTE
-        ====================================================== */
+    /* =====================================================
+       GOLD DATA
+    ====================================================== */
 
-        function fitRoute() {
+    const goldData = {
 
-            if (routeLine) {
+        holder:
+            "Mary Thomas",
 
-                map.fitBounds(
-                    routeLine.getBounds(),
-                    {
-                        padding: [40, 40]
-                    }
-                );
+        company:
+            "PAUL & CO LLP",
 
-            }
+        goldID:
+            "GT-066",
 
-        }
+        weight:
+            "100 KG",
 
+        origin:
+            "Airport City, Accra, Ghana",
 
-        /* =====================================================
-           CENTER CURRENT MARKER
-        ====================================================== */
+        destination:
+            "220 GOLDEN GATE AVE APT 83S, SAN FRANCISCO, CA",
 
-        function centerMarker() {
+        journey:
+            "7 days",
 
-            if (
-                marker &&
-                map.hasLayer(marker)
-            ) {
+        status:
+            "Admin Controlled"
 
-                map.setView(
-                    marker.getLatLng(),
-                    6,
-                    {
-                        animate: true
-                    }
-                );
-
-                marker.openPopup();
-
-            }
-
-        }
+    };
 
 
-        /* =====================================================
-           GOLD DATA
-        ====================================================== */
+    console.log(
+        "PAUL & CO LLP — Gold Track System",
+        goldData
+    );
 
-        const goldData = {
-
-            holder:
-                "Mary Thomas",
-
-            company:
-                "PAUL & CO LLP",
-
-            goldID:
-                "GT-066",
-
-            weight:
-                "100 KG",
-
-            origin:
-                "Airport City, Accra, Ghana",
-
-            destination:
-                "220 GOLDEN GATE AVE APT 83S, SAN FRANCISCO, CA",
-
-            journey:
-                "7 days",
-
-            status:
-                "Admin Controlled"
-
-        };
-
-
-        console.log(
-            "PAUL & CO LLP — Gold Track System",
-            goldData
-        );
-
-    </script>
+</script>
 
 
 </body>
