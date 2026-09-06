@@ -577,6 +577,39 @@
 </div>
 
 
+<!-- =====================================================
+     SUPABASE LIBRARY
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- =====================================================
+     SUPABASE CONNECTION
+===================================================== -->
+
+<script>
+
+const SUPABASE_URL =
+    "https://uztojwsrkouabbcuyoto.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_gyDE5-dnoWRghyAJzLNfEA_zzZM2daH";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+</script>
+
+
+<!-- =====================================================
+     ADMIN JAVASCRIPT
+===================================================== -->
+
 <script>
 
 /* =========================================================
@@ -610,6 +643,13 @@ const PAUSED_TOTAL_KEY =
 
 const LOSS_KEY =
     "goldConnectionLossProgress";
+
+
+/* =========================================================
+   SUPABASE TRACKING ID
+========================================================= */
+
+const TRACKING_ID = 1;
 
 
 /* =========================================================
@@ -728,18 +768,79 @@ const lossInfo =
 
 
 /* =========================================================
+   SUPABASE: GET TRACKING RECORD
+========================================================= */
+
+async function getTrackingRecord() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("tracking")
+            .select("*")
+            .eq("id", TRACKING_ID)
+            .single();
+
+
+    if (error) {
+
+        console.error(
+            "Supabase read error:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =========================================================
+   SUPABASE: UPDATE TRACKING RECORD
+========================================================= */
+
+async function updateTrackingRecord(values) {
+
+    const { error } =
+        await supabaseClient
+            .from("tracking")
+            .update(values)
+            .eq("id", TRACKING_ID);
+
+
+    if (error) {
+
+        console.error(
+            "Supabase update error:",
+            error
+        );
+
+        showMessage(
+            "Could not save tracking changes to Supabase."
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =========================================================
    CREATE CONNECTION LOSS POINT
 ========================================================= */
 
 function createConnectionLossPoint() {
 
-    const lossPoint =
+    return (
         0.72 +
-        Math.random() * 0.08;
-
-    localStorage.setItem(
-        LOSS_KEY,
-        lossPoint.toString()
+        Math.random() * 0.08
     );
 
 }
@@ -749,109 +850,179 @@ function createConnectionLossPoint() {
    START / RESUME
 ========================================================= */
 
-function startJourney() {
+async function startJourney() {
 
-    const status =
-        localStorage.getItem(
-            STATUS_KEY
-        ) || "scheduled";
+    const tracking =
+        await getTrackingRecord();
+
+
+    if (!tracking) {
+
+        return;
+
+    }
+
+
+    const now =
+        new Date();
 
 
     /*
-     * First start.
+     * FIRST START
      */
 
     if (
-        !localStorage.getItem(
-            START_KEY
-        )
+        !tracking.journey_started_at
     ) {
 
-        localStorage.setItem(
-            START_KEY,
-            Date.now().toString()
+        const lossPoint =
+            tracking.loss_progress !== null
+                ? tracking.loss_progress
+                : createConnectionLossPoint();
+
+
+        const success =
+            await updateTrackingRecord({
+
+                status: "active",
+
+                progress: 0,
+
+                current_location:
+                    "Airport City, Accra, Ghana",
+
+                current_latitude: 5.6037,
+
+                current_longitude: -0.1870,
+
+                connection_lost: false,
+
+                last_known_location:
+                    "Airport City, Accra, Ghana",
+
+                journey_started_at:
+                    now.toISOString(),
+
+                paused_at: null,
+
+                total_paused_seconds: 0,
+
+                loss_progress:
+                    lossPoint,
+
+                updated_at:
+                    now.toISOString()
+
+            });
+
+
+        if (!success) {
+
+            return;
+
+        }
+
+
+        updateDashboard();
+
+
+        showMessage(
+            "Journey started successfully."
         );
 
-        localStorage.setItem(
-            PAUSED_TOTAL_KEY,
-            "0"
-        );
+
+        return;
 
     }
 
 
     /*
-     * Resume after pause.
+     * RESUME AFTER PAUSE
      */
 
     if (
-        status === "paused"
+        tracking.status === "paused" &&
+        tracking.paused_at
     ) {
 
         const pausedAt =
-            parseInt(
-                localStorage.getItem(
-                    PAUSED_AT_KEY
-                )
-            ) || Date.now();
+            new Date(
+                tracking.paused_at
+            ).getTime();
 
 
-        let pausedTotal =
-            parseInt(
-                localStorage.getItem(
-                    PAUSED_TOTAL_KEY
-                )
+        const pausedSeconds =
+            Math.max(
+                0,
+                (
+                    Date.now() -
+                    pausedAt
+                ) / 1000
+            );
+
+
+        const previousPaused =
+            Number(
+                tracking.total_paused_seconds
             ) || 0;
 
 
-        pausedTotal +=
-            Date.now() - pausedAt;
+        const newPausedTotal =
+            previousPaused +
+            pausedSeconds;
 
 
-        localStorage.setItem(
-            PAUSED_TOTAL_KEY,
-            pausedTotal.toString()
+        const success =
+            await updateTrackingRecord({
+
+                status: "active",
+
+                paused_at: null,
+
+                total_paused_seconds:
+                    newPausedTotal,
+
+                updated_at:
+                    now.toISOString()
+
+            });
+
+
+        if (!success) {
+
+            return;
+
+        }
+
+
+        updateDashboard();
+
+
+        showMessage(
+            "Tracking has resumed."
         );
 
 
-        localStorage.removeItem(
-            PAUSED_AT_KEY
-        );
+        return;
 
     }
 
 
     /*
-     * Create loss point only
-     * if this journey does not
-     * already have one.
+     * ALREADY ACTIVE
      */
 
     if (
-        !localStorage.getItem(
-            LOSS_KEY
-        )
+        tracking.status === "active"
     ) {
 
-        createConnectionLossPoint();
+        showMessage(
+            "The journey is already active."
+        );
+
+        return;
 
     }
-
-
-    localStorage.setItem(
-        STATUS_KEY,
-        "active"
-    );
-
-
-    updateDashboard();
-
-
-    showMessage(
-        status === "paused"
-            ? "Tracking has resumed."
-            : "Journey started successfully."
-    );
 
 }
 
@@ -860,16 +1031,21 @@ function startJourney() {
    PAUSE
 ========================================================= */
 
-function pauseJourney() {
+async function pauseJourney() {
 
-    const status =
-        localStorage.getItem(
-            STATUS_KEY
-        );
+    const tracking =
+        await getTrackingRecord();
+
+
+    if (!tracking) {
+
+        return;
+
+    }
 
 
     if (
-        status !== "active"
+        tracking.status !== "active"
     ) {
 
         showMessage(
@@ -881,16 +1057,25 @@ function pauseJourney() {
     }
 
 
-    localStorage.setItem(
-        PAUSED_AT_KEY,
-        Date.now().toString()
-    );
+    const success =
+        await updateTrackingRecord({
+
+            status: "paused",
+
+            paused_at:
+                new Date().toISOString(),
+
+            updated_at:
+                new Date().toISOString()
+
+        });
 
 
-    localStorage.setItem(
-        STATUS_KEY,
-        "paused"
-    );
+    if (!success) {
+
+        return;
+
+    }
 
 
     updateDashboard();
@@ -907,7 +1092,7 @@ function pauseJourney() {
    RESTART
 ========================================================= */
 
-function restartJourney() {
+async function restartJourney() {
 
     const confirmed =
         confirm(
@@ -922,35 +1107,49 @@ function restartJourney() {
     }
 
 
-    localStorage.removeItem(
-        START_KEY
-    );
-
-    localStorage.removeItem(
-        PAUSED_AT_KEY
-    );
-
-    localStorage.removeItem(
-        PAUSED_TOTAL_KEY
-    );
-
-    localStorage.removeItem(
-        LOSS_KEY
-    );
+    const lossPoint =
+        createConnectionLossPoint();
 
 
-    /*
-     * New journey gets a new
-     * fixed connection-loss point.
-     */
+    const success =
+        await updateTrackingRecord({
 
-    createConnectionLossPoint();
+            status: "not_started",
+
+            progress: 0,
+
+            current_location:
+                "Airport City, Accra, Ghana",
+
+            current_latitude: 5.6037,
+
+            current_longitude: -0.1870,
+
+            connection_lost: false,
+
+            last_known_location:
+                "Airport City, Accra, Ghana",
+
+            journey_started_at: null,
+
+            paused_at: null,
+
+            total_paused_seconds: 0,
+
+            loss_progress:
+                lossPoint,
+
+            updated_at:
+                new Date().toISOString()
+
+        });
 
 
-    localStorage.setItem(
-        STATUS_KEY,
-        "scheduled"
-    );
+    if (!success) {
+
+        return;
+
+    }
 
 
     updateDashboard();
@@ -967,21 +1166,28 @@ function restartJourney() {
    SET CONNECTION LOSS
 ========================================================= */
 
-function setConnectionLoss() {
+async function setConnectionLoss() {
 
-    const existing =
-        localStorage.getItem(
-            LOSS_KEY
-        );
+    const tracking =
+        await getTrackingRecord();
+
+
+    if (!tracking) {
+
+        return;
+
+    }
 
 
     if (
-        existing !== null
+        tracking.loss_progress !== null
     ) {
 
         const percentage =
             Math.round(
-                parseFloat(existing) * 100
+                Number(
+                    tracking.loss_progress
+                ) * 100
             );
 
 
@@ -996,7 +1202,27 @@ function setConnectionLoss() {
     }
 
 
-    createConnectionLossPoint();
+    const lossPoint =
+        createConnectionLossPoint();
+
+
+    const success =
+        await updateTrackingRecord({
+
+            loss_progress:
+                lossPoint,
+
+            updated_at:
+                new Date().toISOString()
+
+        });
+
+
+    if (!success) {
+
+        return;
+
+    }
 
 
     updateDashboard();
@@ -1004,11 +1230,7 @@ function setConnectionLoss() {
 
     const percentage =
         Math.round(
-            parseFloat(
-                localStorage.getItem(
-                    LOSS_KEY
-                )
-            ) * 100
+            lossPoint * 100
         );
 
 
@@ -1022,28 +1244,14 @@ function setConnectionLoss() {
 
 
 /* =========================================================
-   GET PROGRESS
+   CALCULATE JOURNEY PROGRESS
 ========================================================= */
 
-function getJourneyProgress() {
-
-    const status =
-        localStorage.getItem(
-            STATUS_KEY
-        ) || "scheduled";
-
-
-    const start =
-        parseInt(
-            localStorage.getItem(
-                START_KEY
-            )
-        );
-
+function calculateJourneyProgress(tracking) {
 
     if (
-        !start ||
-        status === "scheduled"
+        !tracking ||
+        !tracking.journey_started_at
     ) {
 
         return 0;
@@ -1051,44 +1259,56 @@ function getJourneyProgress() {
     }
 
 
-    let pausedTotal =
-        parseInt(
-            localStorage.getItem(
-                PAUSED_TOTAL_KEY
-            )
-        ) || 0;
+    if (
+        tracking.status === "not_started"
+    ) {
+
+        return 0;
+
+    }
+
+
+    const start =
+        new Date(
+            tracking.journey_started_at
+        ).getTime();
 
 
     let currentTime =
         Date.now();
 
 
+    /*
+     * If paused, freeze time at
+     * the exact pause moment.
+     */
+
     if (
-        status === "paused"
+        tracking.status === "paused" &&
+        tracking.paused_at
     ) {
 
-        const pausedAt =
-            parseInt(
-                localStorage.getItem(
-                    PAUSED_AT_KEY
-                )
-            );
-
-
-        if (pausedAt) {
-
-            currentTime =
-                pausedAt;
-
-        }
+        currentTime =
+            new Date(
+                tracking.paused_at
+            ).getTime();
 
     }
+
+
+    const pausedSeconds =
+        Number(
+            tracking.total_paused_seconds
+        ) || 0;
 
 
     const elapsed =
         currentTime -
         start -
-        pausedTotal;
+        (
+            pausedSeconds *
+            1000
+        );
 
 
     let progress =
@@ -1107,15 +1327,13 @@ function getJourneyProgress() {
 
 
     /*
-     * Admin dashboard also freezes
-     * at the connection-loss point.
+     * Freeze at the fixed
+     * connection-loss point.
      */
 
     const loss =
-        parseFloat(
-            localStorage.getItem(
-                LOSS_KEY
-            )
+        Number(
+            tracking.loss_progress
         );
 
 
@@ -1124,7 +1342,8 @@ function getJourneyProgress() {
         progress >= loss
     ) {
 
-        progress = loss;
+        progress =
+            loss;
 
     }
 
@@ -1161,15 +1380,130 @@ function getCurrentLocation(progress) {
 
 
 /* =========================================================
+   SAVE CURRENT TRACKING POSITION
+========================================================= */
+
+async function saveCurrentPosition(
+    tracking,
+    progress,
+    point
+) {
+
+    const loss =
+        Number(
+            tracking.loss_progress
+        );
+
+
+    const reachedLoss =
+        !isNaN(loss) &&
+        progress >= loss;
+
+
+    const values = {
+
+        progress:
+            progress,
+
+        current_location:
+            point.location,
+
+        current_latitude:
+            point.lat,
+
+        current_longitude:
+            point.lng,
+
+        last_known_location:
+            point.location,
+
+        connection_lost:
+            reachedLoss,
+
+        updated_at:
+            new Date().toISOString()
+
+    };
+
+
+    if (reachedLoss) {
+
+        values.status =
+            "lost";
+
+    }
+
+
+    await updateTrackingRecord(
+        values
+    );
+
+}
+
+
+/* =========================================================
    UPDATE DASHBOARD
 ========================================================= */
 
-function updateDashboard() {
+async function updateDashboard() {
 
-    const status =
-        localStorage.getItem(
-            STATUS_KEY
-        ) || "scheduled";
+    const tracking =
+        await getTrackingRecord();
+
+
+    if (!tracking) {
+
+        return;
+
+    }
+
+
+    let status =
+        tracking.status ||
+        "not_started";
+
+
+    const progress =
+        calculateJourneyProgress(
+            tracking
+        );
+
+
+    const point =
+        getCurrentLocation(
+            progress
+        );
+
+
+    /*
+     * If journey is active and
+     * connection loss has been reached,
+     * save lost status.
+     */
+
+    const loss =
+        Number(
+            tracking.loss_progress
+        );
+
+
+    if (
+        status === "active" &&
+        !isNaN(loss) &&
+        progress >= loss
+    ) {
+
+        status =
+            "lost";
+
+
+        await saveCurrentPosition(
+            tracking,
+            progress,
+            point
+        );
+
+    }
 
 
     /*
@@ -1227,10 +1561,6 @@ function updateDashboard() {
      * PROGRESS
      */
 
-    const progress =
-        getJourneyProgress();
-
-
     const percentage =
         Math.floor(
             progress * 100
@@ -1250,13 +1580,9 @@ function updateDashboard() {
      * LOCATION
      */
 
-    const start =
-        localStorage.getItem(
-            START_KEY
-        );
-
-
-    if (!start) {
+    if (
+        !tracking.journey_started_at
+    ) {
 
         currentLocation.textContent =
             "Awaiting journey start...";
@@ -1264,12 +1590,6 @@ function updateDashboard() {
     }
 
     else {
-
-        const point =
-            getCurrentLocation(
-                progress
-            );
-
 
         currentLocation.textContent =
             point.location;
@@ -1281,20 +1601,16 @@ function updateDashboard() {
      * LOSS POINT
      */
 
-    const loss =
-        parseFloat(
-            localStorage.getItem(
-                LOSS_KEY
-            )
-        );
-
-
-    if (!isNaN(loss)) {
+    if (
+        !isNaN(loss)
+    ) {
 
         lossInfo.innerHTML =
             "Connection-loss point: " +
             "<strong>" +
-            Math.round(loss * 100) +
+            Math.round(
+                loss * 100
+            ) +
             "%</strong>";
 
     }
@@ -1304,6 +1620,24 @@ function updateDashboard() {
         lossInfo.innerHTML =
             "Connection-loss point: " +
             "<strong>Not set</strong>";
+
+    }
+
+
+    /*
+     * Save live progress while
+     * the journey is active.
+     */
+
+    if (
+        status === "active"
+    ) {
+
+        await saveCurrentPosition(
+            tracking,
+            progress,
+            point
+        );
 
     }
 
@@ -1369,42 +1703,8 @@ setInterval(
     1000
 );
 
-
-/* =========================================================
-   LISTEN FOR CLIENT/ADMIN CHANGES
-========================================================= */
-
-window.addEventListener(
-    "storage",
-    function(event) {
-
-        if (
-            event.key === STATUS_KEY ||
-            event.key === START_KEY ||
-            event.key === PAUSED_AT_KEY ||
-            event.key === PAUSED_TOTAL_KEY ||
-            event.key === LOSS_KEY
-        ) {
-
-            updateDashboard();
-
-        }
-
-    }
-);
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
 </script>
 
-const SUPABASE_URL = "https://uztojwsrkouabbcuyoto.supabase.co";
-const SUPABASE_KEY = "sb_publishable_gyDE5-dnoWRghyAJzLNfEA_zzZM2daH";
-
-const supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-    
 </body>
 </html>
+
