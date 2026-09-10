@@ -1,11 +1,3 @@
-
-<!-- ==========================================
-     Gold Track System
-     PAUL & CO LLP
-     New Dashboard Design
-     Part 3A-1: dashboard.html
-========================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,14 +7,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-PAUL & CO LLP | Gold Track Dashboard
-</title>
-
+<title>PAUL & CO LLP | Gold Track Dashboard</title>
 
 <!-- Leaflet Map CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
 <style>
 
@@ -33,1070 +24,2048 @@ PAUL & CO LLP | Gold Track Dashboard
     font-family:Arial, sans-serif;
 }
 
-
 body{
-
     background:#0b0b0b;
     color:white;
     min-height:100vh;
-
 }
-
 
 /* ==========================
         HEADER
 ========================== */
 
-
 header{
-
     background:#000;
-
     padding:20px 7%;
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     border-bottom:2px solid #FFD700;
-
 }
-
-
 
 .logo-section{
-
     display:flex;
-
     align-items:center;
-
     gap:15px;
-
 }
-
-
 
 .logo-section img{
-
     width:65px;
-
     height:65px;
-
     object-fit:contain;
-
 }
-
-
 
 .logo-section h2{
-
     color:#FFD700;
-
     font-size:26px;
-
 }
-
-
 
 .logo-section p{
-
     color:#ccc;
-
 }
-
-
 
 .logout-btn{
-
     background:#FFD700;
-
     color:#000;
-
     padding:12px 30px;
-
     border-radius:30px;
-
     text-decoration:none;
-
     font-weight:bold;
-
+    cursor:pointer;
 }
-
-
 
 .logout-btn:hover{
-
     background:white;
-
 }
 
-
-
-
 /* ==========================
-        WELCOME SECTION
+        WELCOME
 ========================== */
-
 
 .welcome{
-
     padding:40px 7%;
-
 }
-
-
 
 .welcome h1{
-
     font-size:40px;
-
     color:#FFD700;
-
 }
-
-
 
 .welcome p{
-
     color:#ccc;
-
     margin-top:10px;
-
     font-size:18px;
-
 }
-
-
 
 /* ==========================
-        SUMMARY CARDS
+        SUMMARY
 ========================== */
 
-
 .summary-container{
-
     width:86%;
-
     margin:auto;
-
     display:grid;
-
     grid-template-columns:
     repeat(auto-fit,minmax(220px,1fr));
-
     gap:20px;
-
 }
-
-
 
 .summary-card{
-
     background:#161616;
-
     padding:25px;
-
     border-radius:18px;
-
     border:1px solid rgba(255,215,0,.3);
-
 }
-
-
 
 .summary-card h3{
-
     color:#aaa;
-
     font-size:16px;
-
     margin-bottom:15px;
-
 }
-
-
 
 .summary-card h2{
-
     color:#FFD700;
-
     font-size:28px;
-
 }
-
-
-
 
 .status{
-
     color:#00ff88 !important;
-
 }
-
-
-
 
 /* ==========================
         MAIN DASHBOARD
 ========================== */
 
-
 .dashboard-grid{
-
     width:86%;
-
     margin:40px auto;
-
     display:grid;
-
     grid-template-columns:
     repeat(auto-fit,minmax(350px,1fr));
-
     gap:25px;
-
 }
-
-
 
 .card{
-
     background:#151515;
-
     border-radius:20px;
-
     padding:30px;
-
     border:1px solid rgba(255,215,0,.25);
-
 }
-
-
 
 .card h2{
-
     color:#FFD700;
-
     margin-bottom:25px;
-
 }
-
-
-
 
 .info-row{
-
     padding:15px 0;
-
     border-bottom:1px solid #333;
-
 }
-
-
 
 .info-row span{
-
     color:#FFD700;
-
     font-weight:bold;
-
 }
-
-
 
 .info-row p{
-
     margin-top:6px;
-
     color:#ddd;
-
 }
-
-
-</style>
-
-
-</head>
-
-
-
-<body>
-
-
-<header>
-
-
-<div class="logo-section">
-
-
-<img src="logo.jpeg" alt="PAUL & CO LLP">
-
-
-<div>
-
-<h2>
-PAUL & CO LLP
-</h2>
-
-
-<p>
-Gold Track System
-</p>
-
-
-</div>
-
-
-</div>
-
-
-
-<a href="#" onclick="logout()" class="logout-btn">
-
-Logout
-
-</a>
-
-
-</header>
-
-
-
-<section class="welcome">
-
-
-<h1>
-Gold Tracking Dashboard
-</h1>
-
-
-<p>
-Welcome to your secure gold asset monitoring portal
-</p>
-
-
-</section>
-
-
-
-
-<section class="summary-container">
-
-
-<div class="summary-card">
-
-<h3>
-Gold Status
-</h3>
-
-<h2 class="status">
-🟢 Secure
-</h2>
-
-</div>
-
-
-
-
-<div class="summary-card">
-
-<h3>
-Gold Weight
-</h3>
-
-<h2>
-325.8 KG
-</h2>
-
-</div>
-
-
-
-
-
-<div class="summary-card">
-
-<h3>
-Gold ID
-</h3>
-
-<h2>
-PCLGT0740
-</h2>
-
-</div>
-
-
-
-
-
-<div class="summary-card">
-
-<h3>
-Storage Date
-</h3>
-
-<h2>
-10 June 2026
-</h2>
-
-</div>
-
-
-</section>
-
-
-
-
-
-<section class="dashboard-grid">
-
-
-<div class="card">
-
-
-<h2>
-Client Information
-</h2>
-
-
-<div class="info-row">
-
-<span>
-Holder Name
-</span>
-
-<p>
-Clare Elizabeth Morton
-</p>
-
-</div>
-
-
-
-<div class="info-row">
-
-<span>
-Country
-</span>
-
-<p>
-United Kingdom
-</p>
-
-</div>
-
-
-<div class="info-row">
-
-<span>
-Company
-</span>
-
-<p>
-PAUL & CO LLP
-</p>
-
-</div>
-
-
-</div>
-<!-- ==========================================
-     Gold Track System
-     PAUL & CO LLP
-     New Dashboard Design
-     Part 3A-2: dashboard.html (Continue)
-========================================== -->
-
-
-<!-- Gold Asset Details -->
-
-<div class="card">
-
-
-<h2>
-Gold Asset Details
-</h2>
-
-
-
-<div class="info-row">
-
-<span>
-Asset Type
-</span>
-
-<p>
-Gold Storage Asset
-</p>
-
-</div>
-
-
-
-<div class="info-row">
-
-<span>
-Gold Weight
-</span>
-
-<p>
-326 KG
-</p>
-
-</div>
-
-
-
-<div class="info-row">
-
-<span>
-Storage Date
-</span>
-
-<p>
-10th June, 2026
-</p>
-
-</div>
-
-
-
-<div class="info-row">
-
-<span>
-Ownership Status
-</span>
-
-<p>
-Verified Holder
-</p>
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-<!-- Live Tracking Map -->
-
-<div class="card">
-
-
-<h2>
-Live Gold Location Tracking
-</h2>
-
-
-<p style="color:#ccc;margin-bottom:20px;">
-
-Current recorded storage location
-
-</p>
-
-
-<div id="map"></div>
-
-
-</div>
-
-
-
-
-
-
-<!-- Storage Information -->
-
-
-<div class="card">
-
-
-<h2>
-Storage Facility
-</h2>
-
-
-
-<div class="info-row">
-
-<span>
-Facility Name
-</span>
-
-<p>
-PAUL & CO LLP Secure Storage Facility
-</p>
-
-</div>
-
-
-
-
-<div class="info-row">
-
-<span>
-Location
-</span>
-
-<p>
-London, United Kingdom
-</p>
-
-</div>
-
-
-
-
-<div class="info-row">
-
-<span>
-Security Level
-</span>
-
-<p style="color:#00ff88">
-
-HIGH SECURITY
-
-</p>
-
-</div>
-
-
-
-
-<div class="info-row">
-
-<span>
-Last Updated
-</span>
-
-<p id="lastTime">
-
-Loading...
-
-</p>
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-<!-- Tracking History -->
-
-
-<div class="card">
-
-
-<h2>
-Tracking History
-</h2>
-
-
-
-<div class="history-item">
-
-<h3>
-✓ Gold Received
-</h3>
-
-<p>
-10th June, 2026
-</p>
-
-</div>
-
-
-
-<div class="history-item">
-
-<h3>
-✓ Storage Verification Completed
-</h3>
-
-<p>
-15th June, 2026
-</p>
-
-</div>
-
-
-
-
-<div class="history-item">
-
-<h3>
-✓ Latest Location Update
-</h3>
-
-<p>
-19th July, 2026
-</p>
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-<!-- Security Overview -->
-
-
-<div class="card">
-
-
-<h2>
-Security Overview
-</h2>
-
-
-
-<div class="security-box">
-
-
-<h3>
-🔒 Asset Protection
-</h3>
-
-
-<p>
-
-Gold information is accessible only
-through authorized client login.
-
-</p>
-
-
-</div>
-
-
-
-
-<div class="security-box">
-
-
-<h3>
-📍 Location Monitoring
-</h3>
-
-
-<p>
-
-The system records the latest
-known storage location.
-
-</p>
-
-
-</div>
-
-
-
-
-<div class="security-box">
-
-
-<h3>
-🛡️ Secure Management
-</h3>
-
-
-<p>
-
-PAUL & CO LLP maintains secure
-gold storage records.
-
-</p>
-
-
-</div>
-
-
-
-</div>
-
-
-
-</section>
-
-
-
-
-
-
-
-<footer>
-
-
-<h2>
-PAUL & CO LLP
-</h2>
-
-
-<p>
-Gold Track System
-</p>
-
-
-<small>
-© 2026 All Rights Reserved
-</small>
-
-
-</footer>
-
-
-
-
-
-
-<style>
-
 
 /* ==========================
         MAP
 ========================== */
 
-
 #map{
-
     width:100%;
-
     height:400px;
-
     border-radius:15px;
-
     border:2px solid #FFD700;
-
 }
 
-
-
-
 /* ==========================
-      TRACKING HISTORY
+        TRACKING STATUS
 ========================== */
 
+.tracking-status-box{
+    background:#222;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+    border-left:4px solid #00ff88;
+}
+
+.tracking-status-box h3{
+    color:#00ff88;
+    margin-bottom:10px;
+}
+
+.tracking-status-box p{
+    color:#ccc;
+    line-height:1.6;
+}
+
+.progress-container{
+    margin-top:20px;
+}
+
+.progress-label{
+    display:flex;
+    justify-content:space-between;
+    color:#ccc;
+    margin-bottom:8px;
+}
+
+.progress-bar{
+    width:100%;
+    height:14px;
+    background:#333;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:#FFD700;
+    border-radius:20px;
+    transition:width:1s linear;
+}
+
+/* ==========================
+        CONNECTION LOST
+========================== */
+
+.connection-lost{
+    display:none;
+    background:#351111;
+    border:1px solid #ff4444;
+    border-left:5px solid #ff4444;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.connection-lost h3{
+    color:#ff5555;
+    margin-bottom:10px;
+}
+
+.connection-lost p{
+    color:#ddd;
+    line-height:1.6;
+}
+
+/* ==========================
+        HISTORY
+========================== */
 
 .history-item{
-
     background:#222;
-
     padding:18px;
-
     margin-bottom:15px;
-
     border-left:4px solid #FFD700;
-
     border-radius:10px;
-
 }
-
-
 
 .history-item h3{
-
     color:#00ff88;
-
     margin-bottom:8px;
-
 }
-
-
-
 
 .history-item p{
-
     color:#ccc;
-
 }
-
-
-
-
 
 /* ==========================
-       SECURITY BOX
+        SECURITY
 ========================== */
 
-
 .security-box{
-
     background:#222;
-
     padding:20px;
-
     margin-bottom:15px;
-
     border-radius:15px;
-
 }
-
-
 
 .security-box h3{
-
     color:#FFD700;
-
     margin-bottom:10px;
-
 }
-
-
 
 .security-box p{
-
     color:#ccc;
-
     line-height:1.6;
-
 }
-
-
-
-
 
 /* ==========================
         FOOTER
 ========================== */
 
-
 footer{
-
     text-align:center;
-
     padding:35px;
-
     background:#000;
-
     border-top:1px solid #333;
-
 }
-
-
 
 footer h2{
-
     color:#FFD700;
-
 }
-
-
 
 footer p{
-
     color:#ccc;
-
 }
-
-
 
 footer small{
-
     color:#777;
-
 }
 
-
-
+/* ==========================
+        MOBILE
+========================== */
 
 @media(max-width:700px){
 
+    .welcome h1{
+        font-size:30px;
+    }
 
-.welcome h1{
+    .dashboard-grid{
+        width:90%;
+    }
 
-    font-size:30px;
+    .summary-container{
+        width:90%;
+    }
+
+    #map{
+        height:300px;
+    }
+
+    header{
+        padding:15px 5%;
+    }
+
+    .logo-section h2{
+        font-size:20px;
+    }
+
+    .logo-section img{
+        width:50px;
+        height:50px;
+    }
+
+    .logout-btn{
+        padding:10px 18px;
+    }
 
 }
-
-
-.dashboard-grid{
-
-    width:90%;
-
-}
-
-
-#map{
-
-    height:300px;
-
-}
-
-
-}
-
 
 </style>
 
+</head>
 
 
+<body>
 
 
-<!-- Leaflet Map JavaScript -->
+<!-- ==========================
+        HEADER
+========================== -->
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<header>
+
+    <div class="logo-section">
+
+        <img
+            src="images/logo.jpeg"
+            alt="PAUL & CO LLP"
+        >
+
+        <div>
+
+            <h2>PAUL & CO LLP</h2>
+
+            <p>Gold Track System</p>
+
+        </div>
+
+    </div>
+
+
+    <a
+        href="#"
+        onclick="logout()"
+        class="logout-btn"
+    >
+        Logout
+    </a>
+
+</header>
+
+
+<!-- ==========================
+        WELCOME
+========================== -->
+
+<section class="welcome">
+
+    <h1>
+        Gold Tracking Dashboard
+    </h1>
+
+    <p>
+        Welcome to your secure gold asset monitoring portal
+    </p>
+
+</section>
+
+
+<!-- ==========================
+        SUMMARY
+========================== -->
+
+<section class="summary-container">
+
+
+    <div class="summary-card">
+
+        <h3>
+            Gold Status
+        </h3>
+
+        <h2
+            id="statusText"
+            class="status"
+        >
+            Checking...
+        </h2>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>
+            Gold Weight
+        </h3>
+
+        <h2>
+            100 KG
+        </h2>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>
+            Gold ID
+        </h3>
+
+        <h2>
+            GT-066
+        </h2>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <h3>
+            Journey
+        </h3>
+
+        <h2>
+            7 Days
+        </h2>
+
+    </div>
+
+
+</section>
+
+
+<!-- ==========================
+        MAIN DASHBOARD
+========================== -->
+
+<section class="dashboard-grid">
+
+
+    <!-- CLIENT INFORMATION -->
+
+    <div class="card">
+
+        <h2>
+            Client Information
+        </h2>
+
+
+        <div class="info-row">
+
+            <span>
+                Holder Name
+            </span>
+
+            <p>
+                Mary Thomas
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Country
+            </span>
+
+            <p>
+                United Kingdom
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Company
+            </span>
+
+            <p>
+                PAUL & CO LLP
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- GOLD DETAILS -->
+
+    <div class="card">
+
+        <h2>
+            Gold Asset Details
+        </h2>
+
+
+        <div class="info-row">
+
+            <span>
+                Asset ID
+            </span>
+
+            <p>
+                GT-066
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Gold Weight
+            </span>
+
+            <p>
+                100 KG
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Origin
+            </span>
+
+            <p>
+                Airport City, Accra, Ghana
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Destination
+            </span>
+
+            <p>
+                220 GOLDEN GATE AVE APT 83S,
+                SAN FRANCISCO, CA
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- LIVE TRACKING -->
+
+    <div class="card">
+
+        <h2>
+            Live Gold Location Tracking
+        </h2>
+
+
+        <div class="tracking-status-box">
+
+            <h3 id="trackingTitle">
+                Checking Tracking Status...
+            </h3>
+
+            <p id="currentLocation">
+                Connecting to tracking system...
+            </p>
+
+
+            <div class="progress-container">
+
+                <div class="progress-label">
+
+                    <span>
+                        Journey Progress
+                    </span>
+
+                    <span id="progressText">
+                        0%
+                    </span>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        id="progressFill"
+                        class="progress-fill"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONNECTION LOST PANEL -->
+
+        <div
+            id="connectionLostBox"
+            class="connection-lost"
+        >
+
+            <h3>
+                ⚠️ Tracking Connection Lost
+            </h3>
+
+            <p>
+                The live tracking connection is currently
+                unavailable. The map is displaying the
+                last known recorded location.
+            </p>
+
+            <p style="margin-top:10px;">
+
+                Last Known Location:
+                <strong id="lastKnownLocation">
+                    Loading...
+                </strong>
+
+            </p>
+
+        </div>
+
+
+        <div id="map"></div>
+
+    </div>
+
+
+    <!-- JOURNEY INFORMATION -->
+
+    <div class="card">
+
+        <h2>
+            Journey Information
+        </h2>
+
+
+        <div class="info-row">
+
+            <span>
+                Origin
+            </span>
+
+            <p>
+                Airport City, Accra, Ghana
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Destination
+            </span>
+
+            <p>
+                220 GOLDEN GATE AVE APT 83S,
+                SAN FRANCISCO, CA
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Planned Duration
+            </span>
+
+            <p>
+                7 Days
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Tracking Mode
+            </span>
+
+            <p>
+                Admin Controlled Live Tracking
+            </p>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <span>
+                Last Database Update
+            </span>
+
+            <p id="lastTime">
+                Loading...
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- TRACKING HISTORY -->
+
+    <div class="card">
+
+        <h2>
+            Tracking History
+        </h2>
+
+
+        <div class="history-item">
+
+            <h3>
+                ✓ Gold Tracking Record Created
+            </h3>
+
+            <p>
+                Tracking system initialized.
+            </p>
+
+        </div>
+
+
+        <div class="history-item">
+
+            <h3>
+                ✓ Origin Confirmed
+            </h3>
+
+            <p>
+                Airport City, Accra, Ghana
+            </p>
+
+        </div>
+
+
+        <div class="history-item">
+
+            <h3>
+                ✓ Destination Registered
+            </h3>
+
+            <p>
+                San Francisco, California, USA
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- SECURITY OVERVIEW -->
+
+    <div class="card">
+
+        <h2>
+            Security Overview
+        </h2>
+
+
+        <div class="security-box">
+
+            <h3>
+                🔒 Asset Protection
+            </h3>
+
+            <p>
+                Gold information is accessible only
+                through authorized client login.
+            </p>
+
+        </div>
+
+
+        <div class="security-box">
+
+            <h3>
+                📍 Location Monitoring
+            </h3>
+
+            <p>
+                The system records the latest known
+                gold tracking location.
+            </p>
+
+        </div>
+
+
+        <div class="security-box">
+
+            <h3>
+                🛡️ Secure Management
+            </h3>
+
+            <p>
+                PAUL & CO LLP maintains controlled
+                gold transportation records.
+            </p>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+<!-- ==========================
+        FOOTER
+========================== -->
+
+<footer>
+
+    <h2>
+        PAUL & CO LLP
+    </h2>
+
+    <p>
+        Gold Track System
+    </p>
+
+    <small>
+        © 2026 All Rights Reserved
+    </small>
+
+</footer>
+
+
+<!-- ==========================
+        LEAFLET
+========================== -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+<!-- ==========================
+        SUPABASE
+========================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
 <script>
 
 
-// ===============================
-// Protect Dashboard
-// ===============================
+/* ==========================================================
+        1. CLIENT LOGIN PROTECTION
+========================================================== */
 
-window.onload = function(){
-
-
-    let loginStatus =
+const loginStatus =
     localStorage.getItem("goldTrackLogin");
 
 
-    if(loginStatus !== "true"){
+if(loginStatus !== "true"){
+
+    window.location.href = "login.html";
+
+}
 
 
-        window.location.href =
-        "login.html";
+/* ==========================================================
+        2. SUPABASE CONNECTION
+========================================================== */
 
+const SUPABASE_URL =
+    "https://uztojwsrkouabbcuyoto.supabase.co";
+
+
+const SUPABASE_KEY =
+    "YOUR_ACTUAL_PUBLISHABLE_KEY";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* ==========================================================
+        3. TRACKING SETTINGS
+========================================================== */
+
+const TRACKING_ID = 1;
+
+
+/*
+    The Admin journey is designed for 7 days.
+*/
+
+const JOURNEY_DURATION =
+    7 * 24 * 60 * 60 * 1000;
+
+
+/* ==========================================================
+        4. ROUTE
+========================================================== */
+
+const route = [
+
+    {
+        lat:5.6037,
+        lng:-0.1870,
+        location:"Airport City, Accra, Ghana",
+        mode:"🚛 Secure Ground",
+        day:1
+    },
+
+    {
+        lat:5.6100,
+        lng:-0.1660,
+        location:"Kotoka International Airport",
+        mode:"✈️ Air Cargo",
+        day:2
+    },
+
+    {
+        lat:8.0000,
+        lng:-7.0000,
+        location:"West African Air Transit",
+        mode:"✈️ International Air Transit",
+        day:2
+    },
+
+    {
+        lat:15.0000,
+        lng:-25.0000,
+        location:"Atlantic Ocean",
+        mode:"✈️ International Air Transit",
+        day:3
+    },
+
+    {
+        lat:25.0000,
+        lng:-42.0000,
+        location:"Atlantic Ocean",
+        mode:"✈️ International Air Transit",
+        day:3
+    },
+
+    {
+        lat:34.0000,
+        lng:-70.0000,
+        location:"North Atlantic Transit",
+        mode:"✈️ International Air Transit",
+        day:4
+    },
+
+    {
+        lat:39.0000,
+        lng:-95.0000,
+        location:"United States",
+        mode:"🇺🇸 USA Processing",
+        day:5
+    },
+
+    {
+        lat:39.0997,
+        lng:-94.5786,
+        location:"Kansas City Region",
+        mode:"🚛 USA Ground",
+        day:5
+    },
+
+    {
+        lat:39.7392,
+        lng:-104.9903,
+        location:"Denver, Colorado",
+        mode:"🚛 USA Ground",
+        day:6
+    },
+
+    {
+        lat:40.7608,
+        lng:-111.8910,
+        location:"Utah Region",
+        mode:"🚛 USA Ground",
+        day:6
+    },
+
+    {
+        lat:38.8026,
+        lng:-116.4194,
+        location:"Western USA",
+        mode:"🚛 USA Ground",
+        day:7
+    },
+
+    {
+        lat:36.7783,
+        lng:-119.4179,
+        location:"California, USA",
+        mode:"🚛 Final Ground Transportation",
+        day:7
+    }
+
+];
+
+
+/* ==========================================================
+        5. MAP VARIABLES
+========================================================== */
+
+let map = null;
+
+let marker = null;
+
+let routeLine = null;
+
+
+/* ==========================================================
+        6. CREATE MAP
+========================================================== */
+
+function initializeMap(){
+
+    if(typeof L === "undefined"){
+
+        console.error(
+            "Leaflet was not loaded."
+        );
+
+        return;
 
     }
 
 
-    loadMap();
-
-    updateTime();
-
-
-};
-
-
+    map =
+        L.map("map")
+        .setView(
+            [5.6037,-0.1870],
+            3
+        );
 
 
-// ===============================
-// Logout
-// ===============================
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution:
+            "© OpenStreetMap contributors"
+        }
+    ).addTo(map);
 
+
+    const routeCoordinates =
+        route.map(
+            point => [
+                point.lat,
+                point.lng
+            ]
+        );
+
+
+    routeLine =
+        L.polyline(
+            routeCoordinates,
+            {
+                color:"#FFD700",
+                weight:4,
+                opacity:.8
+            }
+        ).addTo(map);
+
+
+    marker =
+        L.marker(
+            [
+                route[0].lat,
+                route[0].lng
+            ]
+        ).addTo(map);
+
+
+    marker.bindPopup(
+        "<b>PAUL & CO LLP</b><br>" +
+        "Gold ID: GT-066<br>" +
+        "Weight: 100 KG<br>" +
+        "Current Location:<br>" +
+        "Airport City, Accra, Ghana"
+    );
+
+
+    map.fitBounds(
+        routeLine.getBounds(),
+        {
+            padding:[30,30]
+        }
+    );
+
+}
+
+
+/* ==========================================================
+        7. FIND POSITION ON ROUTE
+========================================================== */
+
+function calculateRoutePosition(progress){
+
+    if(progress <= 0){
+
+        return {
+            lat:route[0].lat,
+            lng:route[0].lng,
+            location:route[0].location,
+            mode:route[0].mode,
+            day:route[0].day
+        };
+
+    }
+
+
+    if(progress >= 100){
+
+        const finalPoint =
+            route[route.length - 1];
+
+        return {
+            lat:finalPoint.lat,
+            lng:finalPoint.lng,
+            location:finalPoint.location,
+            mode:finalPoint.mode,
+            day:finalPoint.day
+        };
+
+    }
+
+
+    const routeIndex =
+        (progress / 100)
+        * (route.length - 1);
+
+
+    const lowerIndex =
+        Math.floor(routeIndex);
+
+
+    const upperIndex =
+        Math.min(
+            lowerIndex + 1,
+            route.length - 1
+        );
+
+
+    const fraction =
+        routeIndex - lowerIndex;
+
+
+    const start =
+        route[lowerIndex];
+
+
+    const end =
+        route[upperIndex];
+
+
+    const lat =
+        start.lat +
+        (
+            (end.lat - start.lat)
+            * fraction
+        );
+
+
+    const lng =
+        start.lng +
+        (
+            (end.lng - start.lng)
+            * fraction
+        );
+
+
+    return {
+
+        lat:lat,
+
+        lng:lng,
+
+        location:
+            fraction < 0.5
+            ? start.location
+            : end.location,
+
+        mode:
+            fraction < 0.5
+            ? start.mode
+            : end.mode,
+
+        day:
+            fraction < 0.5
+            ? start.day
+            : end.day
+
+    };
+
+}
+
+
+/* ==========================================================
+        8. UPDATE MAP
+========================================================== */
+
+function updateMap(
+    latitude,
+    longitude,
+    location,
+    mode,
+    progress
+){
+
+    if(!map || !marker){
+
+        return;
+
+    }
+
+
+    marker.setLatLng(
+        [
+            latitude,
+            longitude
+        ]
+    );
+
+
+    marker.bindPopup(
+
+        "<b>PAUL & CO LLP</b><br>" +
+
+        "Gold ID: GT-066<br>" +
+
+        "Weight: 100 KG<br><br>" +
+
+        "<b>Current Location:</b><br>" +
+
+        location +
+
+        "<br><br>" +
+
+        "<b>Transport:</b><br>" +
+
+        mode +
+
+        "<br><br>" +
+
+        "<b>Journey Progress:</b><br>" +
+
+        progress.toFixed(2) +
+
+        "%"
+
+    );
+
+
+    /*
+        Keep the moving marker visible
+        without constantly zooming the map.
+    */
+
+    map.panTo(
+        [
+            latitude,
+            longitude
+        ],
+        {
+            animate:true,
+            duration:.5
+        }
+    );
+
+}
+
+
+/* ==========================================================
+        9. UPDATE CLIENT DISPLAY
+========================================================== */
+
+function updateDisplay(
+    tracking
+){
+
+    const statusText =
+        document.getElementById(
+            "statusText"
+        );
+
+
+    const trackingTitle =
+        document.getElementById(
+            "trackingTitle"
+        );
+
+
+    const currentLocation =
+        document.getElementById(
+            "currentLocation"
+        );
+
+
+    const progressText =
+        document.getElementById(
+            "progressText"
+        );
+
+
+    const progressFill =
+        document.getElementById(
+            "progressFill"
+        );
+
+
+    const connectionLostBox =
+        document.getElementById(
+            "connectionLostBox"
+        );
+
+
+    const lastKnownLocation =
+        document.getElementById(
+            "lastKnownLocation"
+        );
+
+
+    const lastTime =
+        document.getElementById(
+            "lastTime"
+        );
+
+
+    if(!tracking){
+
+        return;
+
+    }
+
+
+    let progress =
+        Number(tracking.progress) || 0;
+
+
+    progress =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                progress
+            )
+        );
+
+
+    /* ==========================
+        CONNECTION LOST
+    ========================== */
+
+    if(tracking.connection_lost === true){
+
+        statusText.innerHTML =
+            "⚠️ Connection Lost";
+
+
+        statusText.style.color =
+            "#ff5555";
+
+
+        trackingTitle.innerHTML =
+            "⚠️ Tracking Connection Lost";
+
+
+        connectionLostBox.style.display =
+            "block";
+
+
+        const lossProgress =
+            Number(
+                tracking.loss_progress
+            );
+
+
+        if(
+            Number.isFinite(lossProgress)
+            &&
+            lossProgress >= 0
+        ){
+
+            progress =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        lossProgress
+                    )
+                );
+
+        }
+
+
+        const lastLocation =
+            tracking.last_known_location
+            ||
+            tracking.current_location
+            ||
+            "Unknown";
+
+
+        currentLocation.innerHTML =
+            "Last known location: <strong>" +
+            lastLocation +
+            "</strong>";
+
+
+        lastKnownLocation.innerText =
+            lastLocation;
+
+
+    }
+
+    /* ==========================
+        PAUSED
+    ========================== */
+
+    else if(
+        tracking.status === "paused"
+    ){
+
+        statusText.innerHTML =
+            "⏸️ Paused";
+
+
+        statusText.style.color =
+            "#FFD700";
+
+
+        trackingTitle.innerHTML =
+            "⏸️ Journey Paused";
+
+
+        connectionLostBox.style.display =
+            "none";
+
+
+        currentLocation.innerHTML =
+            "Current location: <strong>" +
+            (
+                tracking.current_location
+                ||
+                "Last recorded location"
+            ) +
+            "</strong>";
+
+    }
+
+    /* ==========================
+        NOT STARTED
+    ========================== */
+
+    else if(
+        tracking.status === "not_started"
+        ||
+        tracking.status === "scheduled"
+    ){
+
+        statusText.innerHTML =
+            "⏳ Not Started";
+
+
+        statusText.style.color =
+            "#FFD700";
+
+
+        trackingTitle.innerHTML =
+            "⏳ Journey Not Started";
+
+
+        connectionLostBox.style.display =
+            "none";
+
+
+        currentLocation.innerHTML =
+            "Current location: <strong>" +
+            (
+                tracking.current_location
+                ||
+                route[0].location
+            ) +
+            "</strong>";
+
+    }
+
+    /* ==========================
+        COMPLETED
+    ========================== */
+
+    else if(
+        tracking.status === "completed"
+        ||
+        progress >= 100
+    ){
+
+        statusText.innerHTML =
+            "✅ Journey Completed";
+
+
+        statusText.style.color =
+            "#00ff88";
+
+
+        trackingTitle.innerHTML =
+            "✅ Gold Has Reached Destination";
+
+
+        connectionLostBox.style.display =
+            "none";
+
+
+        currentLocation.innerHTML =
+            "Destination: <strong>" +
+            route[
+                route.length - 1
+            ].location +
+            "</strong>";
+
+    }
+
+    /* ==========================
+        ACTIVE
+    ========================== */
+
+    else{
+
+        statusText.innerHTML =
+            "🟢 Tracking Active";
+
+
+        statusText.style.color =
+            "#00ff88";
+
+
+        trackingTitle.innerHTML =
+            "🟢 Live Tracking Active";
+
+
+        connectionLostBox.style.display =
+            "none";
+
+
+        currentLocation.innerHTML =
+            "Current location: <strong>" +
+            (
+                tracking.current_location
+                ||
+                route[0].location
+            ) +
+            "</strong>";
+
+    }
+
+
+    progressText.innerText =
+        progress.toFixed(2) + "%";
+
+
+    progressFill.style.width =
+        progress + "%";
+
+
+    if(lastTime){
+
+        const updated =
+            tracking.updated_at
+            ? new Date(
+                tracking.updated_at
+            )
+            : new Date();
+
+
+        lastTime.innerText =
+            updated.toLocaleString(
+                "en-GB"
+            );
+
+    }
+
+
+    /*
+        If we have a valid database
+        position, use it.
+    */
+
+    if(
+        tracking.current_latitude !== null
+        &&
+        tracking.current_longitude !== null
+        &&
+        tracking.connection_lost !== true
+    ){
+
+        updateMap(
+
+            Number(
+                tracking.current_latitude
+            ),
+
+            Number(
+                tracking.current_longitude
+            ),
+
+            tracking.current_location
+            ||
+            "Current Location",
+
+            "Live Gold Transportation",
+
+            progress
+
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+        10. FETCH TRACKING DATA
+========================================================== */
+
+async function loadTracking(){
+
+    try{
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+
+            .from("tracking")
+
+            .select("*")
+
+            .eq(
+                "id",
+                TRACKING_ID
+            )
+
+            .single();
+
+
+        if(error){
+
+            console.error(
+                "Supabase tracking error:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        if(!data){
+
+            console.error(
+                "No tracking record found."
+            );
+
+            return;
+
+        }
+
+
+        /*
+            The database is the source of truth
+            for the Admin's tracking state.
+        */
+
+        let progress =
+            Number(data.progress) || 0;
+
+
+        /* ==================================================
+            ACTIVE JOURNEY MOVEMENT
+
+            Calculate the current position from:
+
+            journey_started_at
+            +
+            7-day journey duration
+
+            This makes the marker move based on
+            actual elapsed journey time.
+        ================================================== */
+
+        if(
+            data.status !== "paused"
+            &&
+            data.status !== "not_started"
+            &&
+            data.status !== "scheduled"
+            &&
+            data.status !== "completed"
+            &&
+            data.connection_lost !== true
+            &&
+            data.journey_started_at
+        ){
+
+            const startTime =
+                new Date(
+                    data.journey_started_at
+                ).getTime();
+
+
+            const now =
+                Date.now();
+
+
+            const elapsed =
+                Math.max(
+                    0,
+                    now - startTime
+                );
+
+
+            /*
+                Account for time spent paused.
+            */
+
+            const pausedSeconds =
+                Number(
+                    data.total_paused_seconds
+                ) || 0;
+
+
+            const effectiveElapsed =
+                Math.max(
+                    0,
+                    elapsed -
+                    (
+                        pausedSeconds
+                        * 1000
+                    )
+                );
+
+
+            progress =
+                (
+                    effectiveElapsed /
+                    JOURNEY_DURATION
+                ) * 100;
+
+
+            progress =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        progress
+                    )
+                );
+
+
+            const position =
+                calculateRoutePosition(
+                    progress
+                );
+
+
+            /*
+                Update the map immediately.
+            */
+
+            updateMap(
+
+                position.lat,
+
+                position.lng,
+
+                position.location,
+
+                position.mode,
+
+                progress
+
+            );
+
+
+            /*
+                Display the calculated
+                current location.
+            */
+
+            data.current_location =
+                position.location;
+
+
+            data.current_latitude =
+                position.lat;
+
+
+            data.current_longitude =
+                position.lng;
+
+
+            data.progress =
+                progress;
+
+        }
+
+
+        /*
+            If journey is paused, keep
+            the database position.
+        */
+
+        else if(
+            data.status === "paused"
+        ){
+
+            progress =
+                Number(data.progress) || 0;
+
+
+            const position =
+                calculateRoutePosition(
+                    progress
+                );
+
+
+            updateMap(
+
+                Number(
+                    data.current_latitude
+                ) ||
+                position.lat,
+
+                Number(
+                    data.current_longitude
+                ) ||
+                position.lng,
+
+                data.current_location
+                ||
+                position.location,
+
+                position.mode,
+
+                progress
+
+            );
+
+        }
+
+
+        /*
+            Connection lost:
+            display the last known position.
+        */
+
+        else if(
+            data.connection_lost === true
+        ){
+
+            const lossProgress =
+                Number(
+                    data.loss_progress
+                );
+
+
+            if(
+                Number.isFinite(
+                    lossProgress
+                )
+            ){
+
+                progress =
+                    lossProgress;
+
+            }
+
+
+            const position =
+                calculateRoutePosition(
+                    progress
+                );
+
+
+            updateMap(
+
+                Number(
+                    data.current_latitude
+                ) ||
+                position.lat,
+
+                Number(
+                    data.current_longitude
+                ) ||
+                position.lng,
+
+                data.last_known_location
+                ||
+                data.current_location
+                ||
+                position.location,
+
+                "⚠️ Last Known Position",
+
+                progress
+
+            );
+
+        }
+
+
+        /*
+            Not started.
+        */
+
+        else if(
+            data.status === "not_started"
+            ||
+            data.status === "scheduled"
+        ){
+
+            progress = 0;
+
+
+            updateMap(
+
+                route[0].lat,
+
+                route[0].lng,
+
+                route[0].location,
+
+                route[0].mode,
+
+                0
+
+            );
+
+        }
+
+
+        /*
+            Completed.
+        */
+
+        else if(
+            data.status === "completed"
+            ||
+            progress >= 100
+        ){
+
+            progress = 100;
+
+
+            const finalPoint =
+                route[
+                    route.length - 1
+                ];
+
+
+            updateMap(
+
+                finalPoint.lat,
+
+                finalPoint.lng,
+
+                finalPoint.location,
+
+                finalPoint.mode,
+
+                100
+
+            );
+
+        }
+
+
+        updateDisplay(data);
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Tracking system error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+        11. LOGOUT
+========================================================== */
 
 function logout(){
-
 
     localStorage.removeItem(
         "goldTrackLogin"
@@ -1104,162 +2073,34 @@ function logout(){
 
 
     window.location.href =
-    "login.html";
-
+        "login.html";
 
 }
 
 
+/* ==========================================================
+        12. START SYSTEM
+========================================================== */
 
+window.addEventListener(
+    "load",
+    function(){
 
-// ===============================
-// UK Gold Location Map
-// ===============================
+        initializeMap();
 
+        loadTracking();
 
-function loadMap(){
+        /*
+            Check the database every 2 seconds.
+        */
 
-
-    let map = L.map("map")
-    .setView(
-        [51.5074,-0.1278],
-        13
-    );
-
-
-
-    L.tileLayer(
-    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-
-        attribution:
-        "© OpenStreetMap"
+        setInterval(
+            loadTracking,
+            2000
+        );
 
     }
-
-    ).addTo(map);
-
-
-
-    let marker =
-    L.marker(
-        [51.5074,-0.1278]
-    )
-    .addTo(map);
-
-
-
-    marker.bindPopup(`
-
-        <h3>
-        PAUL & CO LLP
-        </h3>
-
-        <p>
-        Gold Storage Facility
-        </p>
-
-        <p>
-        📍 London, United Kingdom
-        </p>
-
-        <p>
-        🟢 Securely Stored
-        </p>
-
-    `)
-    .openPopup();
-
-
-}
-
-
-
-
-// ===============================
-// Live Time
-// ===============================
-
-
-function updateTime(){
-
-
-    let timeBox =
-    document.getElementById(
-        "lastTime"
-    );
-
-
-    setInterval(function(){
-
-
-        let now =
-        new Date();
-
-
-        if(timeBox){
-
-
-            timeBox.innerHTML =
-            now.toLocaleString(
-                "en-GB"
-            );
-
-
-        }
-
-
-    },1000);
-
-
-}
-
-
-
-
-
-// ===============================
-// Gold Data
-// ===============================
-
-
-const goldData = {
-
-
-    holder:
-    "Clare Elizabeth Morton",
-
-
-    company:
-    "PAUL & CO LLP",
-
-
-    country:
-    "United Kingdom",
-
-
-    weight:
-    "326 KG",
-
-
-    storageDate:
-    "10th June, 2026",
-
-
-    location:
-    "London, United Kingdom",
-
-
-    status:
-    "Securely Stored"
-
-
-};
-
-
-console.log(goldData);
-
-
+);
 
 </script>
 
